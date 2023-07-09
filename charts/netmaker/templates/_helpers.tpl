@@ -96,7 +96,7 @@ Host for postgresql
 */}}
 {{- define "netmaker.database.host" -}}
 {{- if .Values.database.internal }}
-{{- .Release.Name }}-postgresql-ha-pgpool.{{ .Release.Namespace }}
+{{- .Release.Name }}-postgresql.{{ .Release.Namespace }}
 {{- else }}
 {{- index .Values "external-postgresql" "host" }}
 {{- end }}
@@ -107,7 +107,7 @@ Port for postgresql
 */}}
 {{- define "netmaker.database.port" -}}
 {{- if .Values.database.internal }}
-{{- index .Values "postgresql-ha" "postgresql" "containerPorts" "postgresql" }}
+{{- index .Values "postgresql" "containerPorts" "postgresql" }}
 {{- else }}
 {{- index .Values "external-postgresql" "port" }}
 {{- end }}
@@ -118,7 +118,7 @@ Database for postgresql
 */}}
 {{- define "netmaker.database.database" -}}
 {{- if .Values.database.internal }}
-{{- index .Values "postgresql-ha" "postgresql" "database" }}
+{{- index .Values "postgresql" "postgresql" "database" }}
 {{- else }}
 {{- index .Values "external-postgresql" "database" }}
 {{- end }}
