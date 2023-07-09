@@ -21,6 +21,7 @@ data:
   CLIENT_MODE: "on"
   CORS_ALLOWED_ORIGIN: '*'
   DATABASE: postgres
+  SQL_PORT: "{{ include "netmaker.database.port" . }}"
   DISPLAY_KEYS: "on"
   MQ_HOST: {{ include "netmaker.fullname" . }}-mqtt
   MQ_PORT: "{{ .Values.service.mqPort }}"
