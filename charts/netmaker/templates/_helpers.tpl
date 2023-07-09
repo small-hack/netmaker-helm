@@ -74,7 +74,7 @@ Username for postgresql
 */}}
 {{- define "netmaker.database.username" -}}
 {{- if .Values.database.internal }}
-{{- index .Values "postgresql-ha" "postgresql" "username" }}
+{{- index .Values "postgresql" "username" }}
 {{- else }}
 {{- index .Values "external-postgresql" "username" }}
 {{- end }}
@@ -85,7 +85,7 @@ Password for postgresql
 */}}
 {{- define "netmaker.database.password" -}}
 {{- if .Values.database.internal }}
-{{- index .Values "postgresql-ha" "postgresql" "password" }}
+{{- index .Values "postgresql" "password" }}
 {{- else }}
 {{- index .Values "external-postgresql" "password" }}
 {{- end }}
