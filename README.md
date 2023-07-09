@@ -1,6 +1,8 @@
 # Netmaker Helm
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.17.1](https://img.shields.io/badge/AppVersion-0.17.1-informational?style=flat-square)
+This is a fork of gravitl/netmaker-helm for testing alternative deployment methods. This is a bit more actively maintained than the gravitl repo, but I'll be changing a lot more, a lot faster, and so it may be slightly unstable.
+
+![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
 A Helm chart to run Netmaker with High Availability on Kubernetes
 
@@ -20,9 +22,9 @@ To run HA Netmaker on Kubernetes, your cluster must have the following:
 
 Furthermore, the chart will by default install and use a postgresql cluster as its datastore: 
 
-| Repository | Name | Version |
-|------------|------|---------|
-| https://charts.bitnami.com/bitnami | postgresql-ha | 7.11.0 |
+| Repository                         |    Name    | Version |
+|------------------------------------|------------|---------|
+| https://charts.bitnami.com/bitnami | postgresql |  12.6.0 |
 
 ### Example Install
 
