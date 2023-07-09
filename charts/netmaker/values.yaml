@@ -157,6 +157,6 @@ external-postgresql:
   # -- postgress db
   database: netmaker
 
-# name of an existing secret to use for mq pass key must be the following:
+# name of an existing secret to use for mq pass, key must be the following:
 # MQ_ADMIN_PASSWORD
 existingSecret: ''
