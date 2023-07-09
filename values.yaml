@@ -122,10 +122,14 @@ wireguard:
 # -- which database will be use
 database:
   internal: true
+  host: ''
+  database: netmaker
+  port: 5432
 
 # -- internal database
 postgresql-ha:
   postgresql:
+    existingSecret: ''
     # -- postgres user to generate
     username: netmaker
     # -- postgres pass to generate
@@ -135,8 +139,9 @@ postgresql-ha:
     containerPorts:
       postgresql: 5432
     # -- postgress number of replicas to deploy
-    replicaCount: 2
+    replicaCount: 1
   persistence:
+    existingClaim: ''
     # -- size of postgres DB
     size: 1Gi
 
@@ -152,11 +157,6 @@ external-postgresql:
   # -- postgress db
   database: netmaker
 
-# name of an existing secret to use for mq pass and db config
-# keys must be the following:
-# SQL_HOST
-# SQL_DB
-# SQL_USER
-# SQL_PASS
+# name of an existing secret to use for mq pass key must be the following:
 # MQ_ADMIN_PASSWORD
 existingSecret: ''
