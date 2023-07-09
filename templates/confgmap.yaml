@@ -19,18 +19,12 @@ data:
   DNS_MODE: "off"
   {{- end }}
   CLIENT_MODE: "on"
-  MASTER_KEY: {{ include "netmaker.masterKey" . }}
   CORS_ALLOWED_ORIGIN: '*'
-  SQL_HOST: "{{ include "netmaker.database.host" . }}"
-  SQL_PORT: "{{ include "netmaker.database.port" . }}"
-  SQL_DB: "{{ include "netmaker.database.database" . }}"
-  SQL_USER: "{{ include "netmaker.database.username" . }}"
-  SQL_PASS: "{{ include "netmaker.database.password" . }}"
   DATABASE: postgres
   DISPLAY_KEYS: "on"
   MQ_HOST: {{ include "netmaker.fullname" . }}-mqtt
   MQ_PORT: "{{ .Values.service.mqPort }}"
   MQ_SERVER_PORT: "1883"
-  MQ_ADMIN_PASSWORD: {{ .Values.mq.password }}
+  MASTER_KEY: {{ include "netmaker.masterKey" . }}
   PLATFORM: "Kubernetes"
   VERBOSITY: "3"

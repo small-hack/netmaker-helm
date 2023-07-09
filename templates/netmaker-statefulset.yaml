@@ -44,6 +44,13 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ include "netmaker.fullname" . }}
+          {{- if .Values.existingSecret }}
+          - secretRef:
+              name: {{ .Values.existingSecret }}
+          {{- else }}
+          - secretRef:
+              name: netmaker-secret
+          {{- end }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ include "netmaker.fullname" . }}

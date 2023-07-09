@@ -42,11 +42,12 @@ ui:
 
 mq:
   # -- how many MQTT replicas to create
-  replicas: 2
-  singlenode: false
+  # change to 2 or more and set singlenode to false if needed
+  replicas: 1
+  singlenode: true
   storageSize: 128Mi
   password: 3yyerWGdds43yegGR
-  # existingClaim: 
+  existingClaim: ""
   RWX:
     storageClassName: ""
 
@@ -150,3 +151,13 @@ external-postgresql:
   password: netmaker
   # -- postgress db
   database: netmaker
+
+# name of an existing secret to use for mq pass and db config
+# keys must be the following:
+# SQL_HOST
+# SQL_PORT
+# SQL_DB
+# SQL_USER
+# SQL_PASS
+# MQ_ADMIN_PASSWORD
+existingSecret: ''
