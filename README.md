@@ -2,7 +2,7 @@
 
 This is a fork of gravitl/netmaker-helm for testing alternative deployment methods. This is a bit more actively maintained than the gravitl repo, but I'll be changing a lot more, a lot faster, and so it may be slightly unstable.
 
-![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
+![Version: 0.4.3](https://img.shields.io/badge/Version-0.4.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
 A Helm chart to run Netmaker with High Availability on Kubernetes
 

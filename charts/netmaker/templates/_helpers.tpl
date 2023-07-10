@@ -96,7 +96,7 @@ Host for postgresql
 */}}
 {{- define "netmaker.database.host" -}}
 {{- if .Values.database.internal }}
-{{- .Release.Name }}-postgresql.{{ .Release.Namespace }}
+{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}
 {{- else }}
 {{- index .Values "external-postgresql" "host" }}
 {{- end }}
