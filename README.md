@@ -2,7 +2,7 @@
 
 This is a fork of gravitl/netmaker-helm for testing alternative deployment methods. This is a bit more actively maintained than the gravitl repo, but I'll be changing a lot more, a lot faster, and so it may be slightly unstable.
 
-![Version: 0.5.2](https://img.shields.io/badge/Version-0.5.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
+![Version: 0.5.3](https://img.shields.io/badge/Version-0.5.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
 A Helm chart to run Netmaker with High Availability on Kubernetes
 
@@ -22,9 +22,9 @@ To run HA Netmaker on Kubernetes, your cluster must have the following:
 
 Furthermore, the chart will by default install and use a postgresql cluster as its datastore: 
 
-| Repository                         |    Name    | Version |
+| Repository                         | Name       | Version |
 |------------------------------------|------------|---------|
-| https://charts.bitnami.com/bitnami | postgresql |  12.6.0 |
+| https://charts.bitnami.com/bitnami | postgresql | 12.6.0  |
 
 ### Example Install
 
@@ -86,49 +86,66 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 
 ## Values
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| dns.enabled | bool | `false` | whether or not to run with DNS (CoreDNS) |
-| dns.storageSize | string | `"128Mi"` | volume size for DNS (only needs to hold one file) |
-| fullnameOverride | string | `""` | override the full name for netmaker objects  |
-| image.pullPolicy | string | `"Always"` | Pull Policy for images |
-| image.repository | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from  |
-| image.tag | string | `"v0.17.1"` | Override the image tag to pull  |
-| ingress.annotations.base."kubernetes.io/ingress.allow-http" | string | `"false"` | annotation to generate ACME certs if available |
-| ingress.annotations.nginx."nginx.ingress.kubernetes.io/rewrite-target" | string | `"/"` | destination addr for route |
-| ingress.annotations.nginx."nginx.ingress.kubernetes.io/ssl-redirect" | string | `"true"` | Redirect http to https  |
-| ingress.annotations.tls."kubernetes.io/tls-acme" | string | `"true"` | use acme cert if available |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-entry-point" | string | `"https"` | Redirect to https |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-permanent" | string | `"true"` | Redirect to https permanently |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/rule-type" | string | `"PathPrefixStrip"` | rule type |
-| ingress.enabled | bool | `false` | attempts to configure ingress if true |
-| ingress.hostPrefix.mq | string | `"broker."` | broker route subdomain |
-| ingress.hostPrefix.rest | string | `"api."` | api (REST) route subdomain |
-| ingress.hostPrefix.ui | string | `"dashboard."` | ui route subdomain |
-| ingress.tls.enabled | bool | `true` |  |
-| ingress.tls.issuerName | string | `"letsencrypt-prod"` |  |
-| nameOverride | string | `""` | override the name for netmaker objects  |
-| podAnnotations | object | `{}` | pod annotations to add |
-| podSecurityContext | object | `{}` | pod security contect to add |
-| database.internal | bool | `true` | internal or external postgresql |
-| postgresql-ha.persistence.size | string | `"3Gi"` | size of postgres DB |
-| postgresql-ha.postgresql.database | string | `"netmaker"` | postgress db to generate |
-| postgresql-ha.postgresql.password | string | `"netmaker"` | postgres pass to generate |
-| postgresql-ha.postgresql.username | string | `"netmaker"` | postgres user to generate |
-| postgresql-ha.postgresql.containerPorts.postgresql | int | `5432` | postgres port |
-| external-postgresql.host | string | `"external.postgres.url"` | external postgres host |
-| external-postgresql.port | int | `5432` | external postgres port |
-| external-postgresql.database | string | `"netmaker"` | external postgress db |
-| external-postgresql.password | string | `"netmaker"` | external postgres pass |
-| external-postgresql.username | string | `"netmaker"` | external postgres user |
-| replicas | int | `3` | number of netmaker server replicas to create  |
-| service.mqPort | int | `443` | public port for MQ service |
-| service.restPort | int | `8081` | port for API service |
-| service.type | string | `"ClusterIP"` | type for netmaker server services |
-| service.uiPort | int | `80` | port for UI service |
-| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
-| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `""` | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
-| ui.replicas | int | `2` | how many UI replicas to create |
-| wireguard.kernel | bool | `false` | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts). |
-| wireguard.networkLimit | int | `10` | max number of networks that Netmaker will support if running with WireGuard enabled |
+### Ingress
+
+| Key                                                                              | Type   | Default              | Description                                          |
+|----------------------------------------------------------------------------------|--------|----------------------|------------------------------------------------------|
+| ingress.annotations.base."kubernetes.io/ingress.allow-http"                      | string | `"false"`            | annotation to generate ACME certs if available       |
+| ingress.annotations.nginx."nginx.ingress.kubernetes.io/rewrite-target"           | string | `"/"`                | destination addr for route                           |
+| ingress.annotations.nginx."nginx.ingress.kubernetes.io/ssl-redirect"             | string | `"true"`             | Redirect http to https                               |
+| ingress.annotations.tls."kubernetes.io/tls-acme"                                 | string | `"true"`             | use acme cert if available                           |
+| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-entry-point" | string | `"https"`            | Redirect to https                                    |
+| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-permanent"   | string | `"true"`             | Redirect to https permanently                        |
+| ingress.annotations.traefik."traefik.ingress.kubernetes.io/rule-type"            | string | `"PathPrefixStrip"`  | rule type                                            |
+| ingress.enabled                                                                  | bool   | `false`              | attempts to configure ingress if true                |
+| ingress.hostPrefix.mq                                                            | string | `"broker."`          | broker route subdomain                               |
+| ingress.hostPrefix.rest                                                          | string | `"api."`             | api (REST) route subdomain                           |
+| ingress.hostPrefix.ui                                                            | string | `"dashboard."`       | ui route subdomain                                   |
+| ingress.tls.enabled                                                              | bool   | `true`               | enable external traffic to cluster                   |
+| ingress.tls.issuerName                                                           | string | `"letsencrypt-prod"` | Name of Issuer or ClusterIssuer to use for TLS certs |
+
+### Database Parameters
+
+| Key                                  | Type   | Default                   | Description                              |
+|--------------------------------------|--------|---------------------------|------------------------------------------|
+| database.internal                    | bool   | `true`                    | internal or external postgresql          |
+| postgresql.persistence.size          | string | `"3Gi"`                   | size of postgres DB                      |
+| postgresql.auth.database             | string | `"netmaker"`              | postgress db to generate                 |
+| postgresql.auth.password             | string | `"netmaker"`              | postgres pass to generate                |
+| postgresql.auth.username             | string | `"netmaker"`              | postgres user to generate                |
+| postgresql.auth.existingSecret       | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set. |
+| postgresql.containerPorts.postgresql | int    | `5432`                    | postgres port                            |
+| external-postgresql.host             | string | `"external.postgres.url"` | external postgres host                   |
+| external-postgresql.port             | int    | `5432`                    | external postgres port                   |
+| external-postgresql.database         | string | `"netmaker"`              | external postgress db                    |
+| external-postgresql.password         | string | `"netmaker"`              | external postgres pass                   |
+| external-postgresql.username         | string | `"netmaker"`              | external postgres user                   |
+
+
+### Misc Parameters
+
+| Key                        | Type   | Default              | Description                                                                                       |
+|----------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
+| dns.enabled                | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
+| dns.storageSize            | string | `"128Mi"`            | volume size for DNS (only needs to hold one file)                                                 |
+| fullnameOverride           | string | `""`                 | override the full name for netmaker objects                                                       |
+| image.pullPolicy           | string | `"Always"`           | Pull Policy for images                                                                            |
+| image.repository           | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
+| image.tag                  | string | `"v0.17.1"`          | Override the image tag to pull                                                                    |
+| nameOverride               | string | `""`                 | override the name for netmaker objects                                                            |
+| podAnnotations             | object | `{}`                 | pod annotations to add                                                                            |
+| podSecurityContext         | object | `{}`                 | pod security contect to add                                                                       |
+| mq.existingClaim           | string | `""`                 | Existing PVC claim name to use for MQTT                                                           |
+| replicas                   | int    | `3`                  | number of netmaker server replicas to create                                                      |
+| service.mqPort             | int    | `443`                | public port for MQ service                                                                        |
+| service.restPort           | int    | `8081`               | port for API service                                                                              |
+| service.type               | string | `"ClusterIP"`        | type for netmaker server services                                                                 |
+| service.uiPort             | int    | `80`                 | port for UI service                                                                               |
+| serviceAccount.annotations | object | `{}`                 | Annotations to add to the service account                                                         |
+| serviceAccount.create      | bool   | `true`               | Specifies whether a service account should be created                                             |
+| serviceAccount.name        | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
+| ui.replicas                | int    | `2`                  | how many UI replicas to create                                                                    |
+| wireguard.kernel           | bool   | `false`              | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts).         |
+| wireguard.networkLimit     | int    | `10`                 | max number of networks that Netmaker will support if running with WireGuard enabled               |
+
+

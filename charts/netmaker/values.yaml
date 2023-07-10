@@ -36,6 +36,11 @@ podAnnotations: {}
 podSecurityContext: {}
 # fsGroup: 2000
 
+persistence:
+  sharedData:
+    # if not specified, this will create HELM.RELEASE.NAME-shared-data-pvc by default
+    existingClaim: ""
+
 ui:
   # -- how many UI replicas to create
   replicas: 2
@@ -54,6 +59,8 @@ mq:
 dns:
   # -- whether or not to deploy coredns
   enabled: false
+  # existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns-pvc
+  existingClaim: ''
   storageSize: 128Mi
   RWX:
     storageClassName: ""
