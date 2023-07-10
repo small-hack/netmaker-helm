@@ -124,28 +124,29 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 
 ### Misc Parameters
 
-| Key                        | Type   | Default              | Description                                                                                       |
-|----------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
-| dns.enabled                | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
-| dns.storageSize            | string | `"128Mi"`            | volume size for DNS (only needs to hold one file)                                                 |
-| fullnameOverride           | string | `""`                 | override the full name for netmaker objects                                                       |
-| image.pullPolicy           | string | `"Always"`           | Pull Policy for images                                                                            |
-| image.repository           | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
-| image.tag                  | string | `"v0.17.1"`          | Override the image tag to pull                                                                    |
-| nameOverride               | string | `""`                 | override the name for netmaker objects                                                            |
-| podAnnotations             | object | `{}`                 | pod annotations to add                                                                            |
-| podSecurityContext         | object | `{}`                 | pod security contect to add                                                                       |
-| mq.existingClaim           | string | `""`                 | Existing PVC claim name to use for MQTT                                                           |
-| replicas                   | int    | `3`                  | number of netmaker server replicas to create                                                      |
-| service.mqPort             | int    | `443`                | public port for MQ service                                                                        |
-| service.restPort           | int    | `8081`               | port for API service                                                                              |
-| service.type               | string | `"ClusterIP"`        | type for netmaker server services                                                                 |
-| service.uiPort             | int    | `80`                 | port for UI service                                                                               |
-| serviceAccount.annotations | object | `{}`                 | Annotations to add to the service account                                                         |
-| serviceAccount.create      | bool   | `true`               | Specifies whether a service account should be created                                             |
-| serviceAccount.name        | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
-| ui.replicas                | int    | `2`                  | how many UI replicas to create                                                                    |
-| wireguard.kernel           | bool   | `false`              | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts).         |
-| wireguard.networkLimit     | int    | `10`                 | max number of networks that Netmaker will support if running with WireGuard enabled               |
+| Key                                  | Type   | Default              | Description                                                                                       |
+|--------------------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
+| persistence.sharedData.existingClaim | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
+| dns.enabled                          | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
+| dns.storageSize                      | string | `"128Mi"`            | volume size for DNS (only needs to hold one file)                                                 |
+| fullnameOverride                     | string | `""`                 | override the full name for netmaker objects                                                       |
+| image.pullPolicy                     | string | `"Always"`           | Pull Policy for images                                                                            |
+| image.repository                     | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
+| image.tag                            | string | `"v0.17.1"`          | Override the image tag to pull                                                                    |
+| nameOverride                         | string | `""`                 | override the name for netmaker objects                                                            |
+| podAnnotations                       | object | `{}`                 | pod annotations to add                                                                            |
+| podSecurityContext                   | object | `{}`                 | pod security contect to add                                                                       |
+| mq.existingClaim                     | string | `""`                 | Existing PVC claim name to use for MQTT                                                           |
+| replicas                             | int    | `3`                  | number of netmaker server replicas to create                                                      |
+| service.mqPort                       | int    | `443`                | public port for MQ service                                                                        |
+| service.restPort                     | int    | `8081`               | port for API service                                                                              |
+| service.type                         | string | `"ClusterIP"`        | type for netmaker server services                                                                 |
+| service.uiPort                       | int    | `80`                 | port for UI service                                                                               |
+| serviceAccount.annotations           | object | `{}`                 | Annotations to add to the service account                                                         |
+| serviceAccount.create                | bool   | `true`               | Specifies whether a service account should be created                                             |
+| serviceAccount.name                  | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
+| ui.replicas                          | int    | `2`                  | how many UI replicas to create                                                                    |
+| wireguard.kernel                     | bool   | `false`              | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts).         |
+| wireguard.networkLimit               | int    | `10`                 | max number of networks that Netmaker will support if running with WireGuard enabled               |
 
 
