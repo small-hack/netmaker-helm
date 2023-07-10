@@ -118,7 +118,7 @@ Database for postgresql
 */}}
 {{- define "netmaker.database.database" -}}
 {{- if .Values.postgresql.enabled }}
-{{- index .Values "postgresql" "postgresql" "database" }}
+{{- index .Values "postgresql" "postgresql" "auth" "database" }}
 {{- else }}
 {{- index .Values "external-postgresql" "database" }}
 {{- end }}
