@@ -5,6 +5,20 @@ A Helm chart to run Netmaker with High Availability on Kubernetes.
 
 This is a fork of a fork of gravitl/netmaker-helm. This is a bit more actively maintained than the gravitl repo, and it moves a lot faster, and so it may be slightly unstable as we work out the kinks. Feel free to submit a PR/Issue if you want to add something or if something is broken.
 
+<!-- vim-markdown-toc GFM -->
+
+* [Requirements](#requirements)
+    * [Example Install](#example-install)
+* [Parameters in values.yaml](#parameters-in-valuesyaml)
+    * [Kernel WireGuard](#kernel-wireguard)
+    * [Ingress Parameters](#ingress-parameters)
+    * [Database Parameters](#database-parameters)
+    * [MQ Parameters](#mq-parameters)
+    * [DNS Parameters](#dns-parameters)
+    * [Oauth Parameters](#oauth-parameters)
+
+<!-- vim-markdown-toc -->
+
 ## Requirements
 
 To run HA Netmaker on Kubernetes, your cluster must have the following:
@@ -37,17 +51,7 @@ helm install netmaker/netmaker --generate-name \ # generate a random id for the 
 # --set postgresql.readReplicaCount=1 \ # number of DB replicas to deploy (default none)
 ```
 
-### Recommended Settings:
-A minimal HA install of Netmaker can be run with the following command:
-
-```bash
-helm install netmaker/netmaker --generate-name --set baseDomain=nm.example.com --set mq.RWX.storageClassName=nfs`
-```
-This install has some notable exceptions:
-- Ingress **must** be manually configured post-install (need to create valid Ingress with TLS)
-- DNS will be disabled
-
-Below, under each parameter section, we discuss the considerations for Ingress, Kernel WireGuard, and DNS.
+Below, each respective parameter section, we discuss the considerations for Ingress, Kernel WireGuard, and DNS.
 
 ## Parameters in values.yaml
 
@@ -72,7 +76,7 @@ Below, under each parameter section, we discuss the considerations for Ingress, 
 | serviceAccount.name                  | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
 | ui.replicas                          | int    | `1`                  | how many UI replicas to create                                                                    |
 
-#### Kernel WireGuard
+### Kernel WireGuard
 If you have control of the Kubernetes worker node servers, we recommend **first** installing WireGuard on the hosts, and then installing HA Netmaker in Kernel mode. By default, Netmaker will install with userspace WireGuard (wireguard-go) for maximum compatibility, and to avoid needing permissions at the host level. If you have installed WireGuard on your hosts, you should install Netmaker's helm chart with the following option:
 `--set wireguard.kernel=true`
 
@@ -175,7 +179,6 @@ To use the an OIDC provider such as azure, google, github, or another provider, 
 | oauth.secretKeys.frontendURL  | string | `""`     | key in existingSecret for the frontend URL. https://dashboard.<netmaker base domain>? |
 | oauth.secretKeys.issuer       | string | `""`     | key in existingSecret for the issuer URL of the oidc provider                         |
 | oauth.secretKeys.azureTenant  | string | `""`     | key in existingSecret for the azure tenant. only for azure provider                   |
-
 
 
 [appVersion defined in Chart.yaml]: https://github.com/jessebot/netmaker-helm/blob/main/charts/netmaker/Chart.yaml#L24
