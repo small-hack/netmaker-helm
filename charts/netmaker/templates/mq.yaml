@@ -88,7 +88,11 @@ spec:
         {{- if .Values.mq.existingClaim }}
           claimName: {{ .Values.mq.existingClaim }}
         {{- else }} 
+          {{- if .Values.persistence.sharedData.existingClaim }}
+          claimName: {{ .Values.persistence.sharedData.existingClaim }}
+          {{- else }}
           claimName: {{ include "netmaker.fullname" . }}-shared-data-pvc
+          {{- end }}
         {{- end }}
 ---
 apiVersion: v1

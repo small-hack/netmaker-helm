@@ -2,7 +2,7 @@
 
 This is a fork of gravitl/netmaker-helm for testing alternative deployment methods. This is a bit more actively maintained than the gravitl repo, but I'll be changing a lot more, a lot faster, and so it may be slightly unstable.
 
-![Version: 0.5.3](https://img.shields.io/badge/Version-0.5.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
+![Version: 0.5.4](https://img.shields.io/badge/Version-0.5.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
 A Helm chart to run Netmaker with High Availability on Kubernetes
 
@@ -114,9 +114,9 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 | postgresql.auth.password             | string | `"netmaker"`              | postgres pass to generate                |
 | postgresql.auth.username             | string | `"netmaker"`              | postgres user to generate                |
 | postgresql.auth.existingSecret       | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set. |
-| postgresql.containerPorts.postgresql | int    | `5432`                    | postgres port                            |
+| postgresql.containerPorts.postgresql | int    | `5.42`                    | postgres port                            |
 | external-postgresql.host             | string | `"external.postgres.url"` | external postgres host                   |
-| external-postgresql.port             | int    | `5432`                    | external postgres port                   |
+| external-postgresql.port             | int    | `5.42`                    | external postgres port                   |
 | external-postgresql.database         | string | `"netmaker"`              | external postgress db                    |
 | external-postgresql.password         | string | `"netmaker"`              | external postgres pass                   |
 | external-postgresql.username         | string | `"netmaker"`              | external postgres user                   |
