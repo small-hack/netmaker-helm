@@ -1,19 +1,17 @@
-# Default values for netmaker.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Default values for the netmaker helm chart. This is a YAML file.
 
 # -- number of netmaker server replicas to create
 replicas: 1
 
-baseDomain: netmaker.org
+baseDomain: example.com
 
 image:
   # -- The image repo to pull Netmaker image from
   repository: gravitl/netmaker
   # -- Pull Policy for images
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # -- Override the image tag to pull
-  tag: "v0.17.1"
+  # tag: ""
 
 # -- override the name for netmaker objects
 nameOverride: ""
@@ -43,7 +41,7 @@ persistence:
 
 ui:
   # -- how many UI replicas to create
-  replicas: 2
+  replicas: 1
 
 mq:
   # -- how many MQTT replicas to create

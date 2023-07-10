@@ -99,7 +99,7 @@ spec:
           - secretRef:
               name: netmaker-secret
           {{- end }}
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: {{ include "netmaker.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ include "netmaker.fullname" . }}
         ports:

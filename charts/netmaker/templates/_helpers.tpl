@@ -25,6 +25,17 @@ If release name contains chart name it will be used as a full name.
 
 
 {{/*
+create image repo and tag based on appVersion and values input
+*/}}
+{{- define "netmaker.image" -}}
+{{- if .Values.image.tag -}}
+{{- printf "%s:%s" .Values.image.repository .Values.image.tag -}}
+{{- else -}}
+{{- printf "%s:%s" .Values.image.repository .Chart.AppVersion -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "netmaker.masterKey" -}}
