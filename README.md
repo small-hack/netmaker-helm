@@ -19,11 +19,7 @@ To run HA Netmaker on Kubernetes, your cluster must have the following:
 	- One option is to set up a Load Balancer which routes broker.domain:443 to the MQTT service on port 8883.
 	- We do not provide guidance beyond this, and recommend using an Ingress Controller that supports websockets.
 
-Furthermore, the chart will by default install and use a Postgresql cluster as its datastore: 
-
-| Repository                         | Name       | Version |
-|------------------------------------|------------|---------|
-| https://charts.bitnami.com/bitnami | postgresql | 12.6.0  |
+Furthermore, the chart will by default install and use the postgresql cluster from [bitnami Postgresql helm chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) as its datastore.
 
 ### Example Install
 
@@ -62,7 +58,7 @@ Below, under each parameter section, we discuss the considerations for Ingress, 
 | fullnameOverride                     | string | `""`                 | override the full name for netmaker objects                                                       |
 | image.pullPolicy                     | string | `"IfNotPresent"`     | Pull Policy for images                                                                            |
 | image.repository                     | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
-| image.tag                            | string | `"appVersion"`       | Override the image tag to pull, defaults to [appVersion defined in Chart.yaml]                    |
+| image.tag                            | string | `""`                 | Override the image tag to pull, defaults to [appVersion defined in Chart.yaml] if not specified   |
 | nameOverride                         | string | `""`                 | override the name for netmaker objects                                                            |
 | podAnnotations                       | object | `{}`                 | pod annotations to add                                                                            |
 | podSecurityContext                   | object | `{}`                 | pod security contect to add                                                                       |
