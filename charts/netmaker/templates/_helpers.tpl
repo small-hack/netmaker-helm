@@ -39,7 +39,7 @@ create image repo and tag based on appVersion and values input
 {{- if .Values.image.tag -}}
 {{- printf "gravitl/netmaker-ui:%s" .Values.image.tag -}}
 {{- else -}}
-{{- printf "gravitl/netmaker-ui::%s" .Chart.AppVersion -}}
+{{- printf "gravitl/netmaker-ui:%s" .Chart.AppVersion -}}
 {{- end -}}
 {{- end }}
 
