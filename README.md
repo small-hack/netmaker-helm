@@ -1,8 +1,8 @@
 # Netmaker Helm
 
-This is a fork of gravitl/netmaker-helm for testing alternative deployment methods. This is a bit more actively maintained than the gravitl repo, but I'll be changing a lot more, a lot faster, and so it may be slightly unstable.
+This is a fork of a fork of gravitl/netmaker-helm. This is a bit more actively maintained than the gravitl repo, but I'll be changing a lot more, a lot faster, and so it may be slightly unstable. Feel free to submit a PR/Issue if you want to add something or if something is broken.
 
-![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
+![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
 A Helm chart to run Netmaker with High Availability on Kubernetes
 
@@ -84,9 +84,31 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 - bind the CoreDNS service to port 53 on one of your worker nodes and set the COREDNS_ADDRESS equal to the public IP of the worker node
 - Create a private Network with Netmaker and set the COREDNS_ADDRESS equal to the private address of the host running CoreDNS. For this, CoreDNS will need a node selector and will ideally run on the same host as one of the Netmaker server instances.
 
-## Values
+## Parameters in values.yaml
 
-### Ingress
+| Key                                  | Type   | Default              | Description                                                                                       |
+|--------------------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
+| persistence.sharedData.existingClaim | string | `""`                 | The name of an existing Persistent Volume Claim to use. If not set, we will create one for you    |
+| fullnameOverride                     | string | `""`                 | override the full name for netmaker objects                                                       |
+| image.pullPolicy                     | string | `"Always"`           | Pull Policy for images                                                                            |
+| image.repository                     | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
+| image.tag                            | string | `"v0.17.1"`          | Override the image tag to pull                                                                    |
+| nameOverride                         | string | `""`                 | override the name for netmaker objects                                                            |
+| podAnnotations                       | object | `{}`                 | pod annotations to add                                                                            |
+| podSecurityContext                   | object | `{}`                 | pod security contect to add                                                                       |
+| replicas                             | int    | `1`                  | number of netmaker server replicas to create                                                      |
+| service.mqPort                       | int    | `443`                | public port for MQ service                                                                        |
+| service.restPort                     | int    | `8081`               | port for API service                                                                              |
+| service.type                         | string | `"ClusterIP"`        | type for netmaker server services                                                                 |
+| service.uiPort                       | int    | `80`                 | port for UI service                                                                               |
+| serviceAccount.annotations           | object | `{}`                 | Annotations to add to the service account                                                         |
+| serviceAccount.create                | bool   | `true`               | Specifies whether a service account should be created                                             |
+| serviceAccount.name                  | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
+| ui.replicas                          | int    | `2`                  | how many UI replicas to create                                                                    |
+| wireguard.kernel                     | bool   | `false`              | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts).         |
+| wireguard.networkLimit               | int    | `10`                 | max number of networks that Netmaker will support if running with WireGuard enabled               |
+
+### Ingress Parameters
 
 | Key                                                                              | Type   | Default              | Description                                          |
 |----------------------------------------------------------------------------------|--------|----------------------|------------------------------------------------------|
@@ -105,23 +127,27 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 | ingress.tls.issuerName                                                           | string | `"letsencrypt-prod"` | Name of Issuer or ClusterIssuer to use for TLS certs |
 
 ### Database Parameters
+To use the bitnami posgresql chart bundled with this chart, set `postgresql.enabled: true`, otherwise, you must provide the connection information using the `externalDatabase` parameters documented below.
 
-| Key                                  | Type   | Default                   | Description                                                                    |
-|--------------------------------------|--------|---------------------------|--------------------------------------------------------------------------------|
-| database.internal                    | bool   | `true`                    | internal or external postgresql                                                |
-| postgresql.persistence.existingClaim | string | `""`                      | Existing PVC claim name to use for postgresql                                  |
-| postgresql.persistence.size          | string | `"3Gi"`                   | size of postgres DB                                                            |
-| postgresql.auth.database             | string | `"netmaker"`              | postgress db to generate                                                       |
-| postgresql.auth.password             | string | `"netmaker"`              | postgres pass to generate                                                      |
-| postgresql.auth.username             | string | `"netmaker"`              | postgres user to generate                                                      |
-| postgresql.auth.existingSecret       | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set.        |
-| postgresql.auth.secretKeys           | string | `""`                      | key in existingSecret for the postgres password, ignores auth.password if set. |
-| postgresql.containerPorts.postgresql | int    | `5.42`                    | postgres port                                                                  |
-| external-postgresql.host             | string | `"external.postgres.url"` | external postgres host                                                         |
-| external-postgresql.port             | int    | `5.42`                    | external postgres port                                                         |
-| external-postgresql.database         | string | `"netmaker"`              | external postgress db                                                          |
-| external-postgresql.password         | string | `"netmaker"`              | external postgres pass                                                         |
-| external-postgresql.username         | string | `"netmaker"`              | external postgres user                                                         |
+| Key                                          | Type   | Default                   | Description                                                                             |
+|----------------------------------------------|--------|---------------------------|-----------------------------------------------------------------------------------------|
+| postgresql.enabled                           | bool   | `false`                   | Deploys postgresql chart bundled with this helm chart. ignores externalDatabase if set. |
+| postgresql.persistence.existingClaim         | string | `""`                      | Existing PVC claim name to use for postgresql                                           |
+| postgresql.persistence.size                  | string | `"3Gi"`                   | size of postgres DB                                                                     |
+| postgresql.auth.database                     | string | `"netmaker"`              | postgress db to generate                                                                |
+| postgresql.auth.password                     | string | `""`                      | postgres pass to generate                                                               |
+| postgresql.auth.username                     | string | `"netmaker"`              | postgres user to generate                                                               |
+| postgresql.auth.existingSecret               | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set.                 |
+| postgresql.auth.secretKeys.userPasswordKey   | string | `""`                      | key in existingSecret for the postgres netmaker password, ignores auth.password if set. |
+| postgresql.auth.secretKeys.adminPasswordKey  | string | `""`                      | key in existingSecret for the postgres admin user's password. Admin user is postgres    |
+| postgresql.containerPorts.postgresql         | int    | `5342`                    | postgres port                                                                           |
+| externalDatabase.host                        | string | `"external.postgres.url"` | external postgres host                                                                  |
+| externalDatabase.port                        | int    | `5342`                    | external postgres port                                                                  |
+| externalDatabase.database                    | string | `"netmaker"`              | external postgress db                                                                   |
+| externalDatabase.password                    | string | `""`                      | external postgres pass                                                                  |
+| externalDatabase.username                    | string | `"netmaker"`              | external postgres user                                                                  |
+| externalDatabase.auth.existingSecret         | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set.                 |
+| externalDatabase.auth.secretKeys.passwordKey | string | `""`                      | key in existingSecret for the postgres password, ignores auth.password if set.          |
 
 ### MQ Parameters
 
@@ -139,28 +165,17 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 | dns.existingClaim | string | `""`      | Existing PVC claim name to use for CoreDNS        |
 | dns.storageSize   | string | `"128Mi"` | volume size for DNS (only needs to hold one file) |
 
-### Misc Parameters
 
-| Key                                  | Type   | Default              | Description                                                                                       |
-|--------------------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
-| persistence.sharedData.existingClaim | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
-| fullnameOverride                     | string | `""`                 | override the full name for netmaker objects                                                       |
-| image.pullPolicy                     | string | `"Always"`           | Pull Policy for images                                                                            |
-| image.repository                     | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
-| image.tag                            | string | `"v0.17.1"`          | Override the image tag to pull                                                                    |
-| nameOverride                         | string | `""`                 | override the name for netmaker objects                                                            |
-| podAnnotations                       | object | `{}`                 | pod annotations to add                                                                            |
-| podSecurityContext                   | object | `{}`                 | pod security contect to add                                                                       |
-| replicas                             | int    | `3`                  | number of netmaker server replicas to create                                                      |
-| service.mqPort                       | int    | `443`                | public port for MQ service                                                                        |
-| service.restPort                     | int    | `8081`               | port for API service                                                                              |
-| service.type                         | string | `"ClusterIP"`        | type for netmaker server services                                                                 |
-| service.uiPort                       | int    | `80`                 | port for UI service                                                                               |
-| serviceAccount.annotations           | object | `{}`                 | Annotations to add to the service account                                                         |
-| serviceAccount.create                | bool   | `true`               | Specifies whether a service account should be created                                             |
-| serviceAccount.name                  | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
-| ui.replicas                          | int    | `2`                  | how many UI replicas to create                                                                    |
-| wireguard.kernel                     | bool   | `false`              | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts).         |
-| wireguard.networkLimit               | int    | `10`                 | max number of networks that Netmaker will support if running with WireGuard enabled               |
+### Oauth Parameters
+To use the an OIDC provider such as azure, google, github, or another provider, set `oauth.enabled: true`.
 
-
+| Key                           | Type   | Default  | Description                                                                           |
+|-------------------------------|--------|----------|---------------------------------------------------------------------------------------|
+| oauth.enabled                 | bool   | `false`  | wether or not to use oauth.                                                                                     |
+| oauth.provider                | string | `"oidc"` | Oauth provider to user. Must be one of: azure-ad, github, google, oidc.               |
+| oauth.existingSecret          | string | `""`     | existingSecret to use for .                                                           |
+| oauth.secretKeys.clientID     | string | `""`     | key in existingSecret for the Client ID to use with the oauth provider                |
+| oauth.secretKeys.clientSecret | string | `""`     | key in existingSecret for the Client Secret for the oauth provider                    |
+| oauth.secretKeys.frontendURL  | string | `""`     | key in existingSecret for the frontend URL. https://dashboard.<netmaker base domain>? |
+| oauth.secretKeys.issuer       | string | `""`     | key in existingSecret for the issuer URL of the oidc provider                         |
+| oauth.secretKeys.azureTenant  | string | `""`     | key in existingSecret for the azure tenant. only for azure provider                   |

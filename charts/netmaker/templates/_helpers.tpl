@@ -76,7 +76,7 @@ Username for postgresql
 {{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "auth" "username" }}
 {{- else }}
-{{- index .Values "external-postgresql" "username" }}
+{{- index .Values "externalDatabase" "username" }}
 {{- end }}
 {{- end }}
 
@@ -89,7 +89,7 @@ Password for postgresql
 {{- index .Values "postgresql" "auth" "password" }}
 {{- end }}
 {{- else }}
-{{- index .Values "external-postgresql" "password" }}
+{{- index .Values "externalDatabase" "password" }}
 {{- end }}
 {{- end }}
 
@@ -100,7 +100,7 @@ Host for postgresql
 {{- if .Values.postgresql.enabled }}
 {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}
 {{- else }}
-{{- index .Values "external-postgresql" "host" }}
+{{- index .Values "externalDatabase" "host" }}
 {{- end }}
 {{- end }}
 
@@ -111,7 +111,7 @@ Port for postgresql
 {{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "containerPorts" "postgresql" }}
 {{- else }}
-{{- index .Values "external-postgresql" "port" }}
+{{- index .Values "externalDatabase" "port" }}
 {{- end }}
 {{- end }}
 
@@ -122,6 +122,6 @@ Database for postgresql
 {{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "auth" "database" }}
 {{- else }}
-{{- index .Values "external-postgresql" "database" }}
+{{- index .Values "externalDatabase" "database" }}
 {{- end }}
 {{- end }}

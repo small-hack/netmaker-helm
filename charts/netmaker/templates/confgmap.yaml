@@ -32,3 +32,6 @@ data:
   MASTER_KEY: {{ include "netmaker.masterKey" . }}
   PLATFORM: "Kubernetes"
   VERBOSITY: "3"
+  {{- if .Values.oauth.enabled }}
+  AUTH_PROVIDER: {{ .Values.oauth.provider }}
+  {{- end }}

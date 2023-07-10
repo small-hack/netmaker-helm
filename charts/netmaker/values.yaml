@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # -- number of netmaker server replicas to create
-replicas: 3
+replicas: 1
 
 baseDomain: netmaker.org
 
@@ -133,8 +133,8 @@ wireguard:
 
 # https://github.com/bitnami/charts/tree/main/bitnami/postgresql#parameters
 postgresql:
-  # -- disable if you want to use an existing db; in which case the values below
-  # must match those of that external postgres instance
+  # set to false if you want to use an existing postgres server.
+  # if false, you must set the externalDatabase parameters
   enabled: true
   # postgresqlHostname: preexisting-postgresql
   # postgresqlPort: 5432
@@ -158,14 +158,39 @@ postgresql:
   persistence:
     existingClaim: ''
 
-external-postgresql:
+# if postgresql.enabled is false, these values are used instead
+externalDatabase:
+  # type of database, only postgreql supported in this helm chart at this time
+  type: postgresql
   # -- postgres host
   host: external.postgres.url
   # -- postgres hosts port
   port: 5432
   # -- postgres username
   username: netmaker
-  # -- postgres pass
-  password: netmaker
+  # -- postgres pass for netmaker user. ignored if existingSecret is set
+  password: ""
   # -- postgress db
   database: netmaker
+  # use existing secret for netmaker user's password
+  existingSecret: ""
+  secretKeys:
+    passwordKey: ""
+
+# OAuth section - untested
+oauth:
+  enabled: false
+  # AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc
+  provider: "oidc"
+  existingSecret: ""
+  secretKeys:
+    # CLIENT_ID - client id of your oauth provider
+    clientID:
+    # CLIENT_SECRET - client secret of your oauth provider
+    clientSecret:
+    # FRONTEND_URL - https://dashboard.<netmaker base domain> <-- untested
+    frontendURL:
+    # OIDC_ISSUER - https://oidc.yourprovider.com - URL of oidc provider
+    issuer:
+    # AZURE_TENANT - only for azure, you may optionally specify the tenant for the OAuth
+    # azureTenant:

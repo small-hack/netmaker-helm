@@ -41,19 +41,56 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.name
-        {{- if .Values.postgresql.auth.existingSecret }}
+        {{- if or .Values.postgresql.auth.existingSecret .Values.externalDatabase.existingSecret }}
         - name: SQL_PASS
           valueFrom:
             secretKeyRef:
+              {{- if .Values.postgresql.auth.existingSecret }}
               name: {{ .Values.postgresql.auth.existingSecret }}
+              {{- else }}
+              name: {{ .Values.externalDatabase.existingSecret }}
+              {{- end }}
+              {{- if .Values.postgresql.auth.secretKeys.userPasswordKey }}
               key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
+              {{- else }}
+              key: {{ .Values.externalDatabase.secretKeys.passwordKey }}
+              {{- end }}
         {{- end }}
         {{- if .Values.mq.existingSecret }}
-        - name: MQ_ADMIN_PASSWORD
+        - name: MQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Values.mq.existingSecret }}
               key: {{ .Values.mq.secretKey }}
+        {{- end }}
+        {{- if .Values.oauth.enabled }}
+        - name: CLIENT_ID 
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.clientID }}
+        - name: CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.clientSecret }}
+        - name: OIDC_ISSUER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.issuer }}
+        - name: FRONTEND_URL 
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.frontendURL }}
+        {{- if .Values.oauth.secretKeys.azureTenant }}
+        - name: AZURE_TENANT 
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.azureTenant }}
+        {{- end }}
         {{- end }}
         envFrom:
           - configMapRef:
