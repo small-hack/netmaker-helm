@@ -100,10 +100,8 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ include "netmaker.fullname" . }}
-          {{- if not .Values.postgresql.auth.existingSecret }}
           - secretRef:
               name: netmaker-secret
-          {{- end }}
         image: {{ include "netmaker.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ include "netmaker.fullname" . }}
