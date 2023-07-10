@@ -52,6 +52,11 @@ mq:
   singlenode: true
   storageSize: 128Mi
   password: 3yyerWGdds43yegGR
+  # name of an existing secret to use for mq password. If set, ignores mq.password
+  existingSecret: ''
+  # name of key in existing secret to grab password from. If set, ignores mq.password
+  secretKey: ''
+  # name of existing PVC claim to use. if set, RWX.storageClassName is ignored
   existingClaim: ""
   RWX:
     storageClassName: ""
@@ -164,7 +169,3 @@ external-postgresql:
   password: netmaker
   # -- postgress db
   database: netmaker
-
-# name of an existing secret to use for mq pass, key must be the following:
-# MQ_ADMIN_PASSWORD
-existingSecret: ''

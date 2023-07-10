@@ -106,29 +106,44 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 
 ### Database Parameters
 
-| Key                                  | Type   | Default                   | Description                              |
-|--------------------------------------|--------|---------------------------|------------------------------------------|
-| database.internal                    | bool   | `true`                    | internal or external postgresql          |
-| postgresql.persistence.size          | string | `"3Gi"`                   | size of postgres DB                      |
-| postgresql.auth.database             | string | `"netmaker"`              | postgress db to generate                 |
-| postgresql.auth.password             | string | `"netmaker"`              | postgres pass to generate                |
-| postgresql.auth.username             | string | `"netmaker"`              | postgres user to generate                |
-| postgresql.auth.existingSecret       | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set. |
-| postgresql.containerPorts.postgresql | int    | `5.42`                    | postgres port                            |
-| external-postgresql.host             | string | `"external.postgres.url"` | external postgres host                   |
-| external-postgresql.port             | int    | `5.42`                    | external postgres port                   |
-| external-postgresql.database         | string | `"netmaker"`              | external postgress db                    |
-| external-postgresql.password         | string | `"netmaker"`              | external postgres pass                   |
-| external-postgresql.username         | string | `"netmaker"`              | external postgres user                   |
+| Key                                  | Type   | Default                   | Description                                                                    |
+|--------------------------------------|--------|---------------------------|--------------------------------------------------------------------------------|
+| database.internal                    | bool   | `true`                    | internal or external postgresql                                                |
+| postgresql.persistence.existingClaim | string | `""`                      | Existing PVC claim name to use for postgresql                                  |
+| postgresql.persistence.size          | string | `"3Gi"`                   | size of postgres DB                                                            |
+| postgresql.auth.database             | string | `"netmaker"`              | postgress db to generate                                                       |
+| postgresql.auth.password             | string | `"netmaker"`              | postgres pass to generate                                                      |
+| postgresql.auth.username             | string | `"netmaker"`              | postgres user to generate                                                      |
+| postgresql.auth.existingSecret       | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set.        |
+| postgresql.auth.secretKeys           | string | `""`                      | key in existingSecret for the postgres password, ignores auth.password if set. |
+| postgresql.containerPorts.postgresql | int    | `5.42`                    | postgres port                                                                  |
+| external-postgresql.host             | string | `"external.postgres.url"` | external postgres host                                                         |
+| external-postgresql.port             | int    | `5.42`                    | external postgres port                                                         |
+| external-postgresql.database         | string | `"netmaker"`              | external postgress db                                                          |
+| external-postgresql.password         | string | `"netmaker"`              | external postgres pass                                                         |
+| external-postgresql.username         | string | `"netmaker"`              | external postgres user                                                         |
 
+### MQ Parameters
+
+| Key               | Type   | Default | Description                                       |
+|-------------------|--------|---------|---------------------------------------------------|
+| mq.existingClaim  | string | `""`    | Existing PVC claim name to use for MQTT           |
+| mq.existingSecret | string | `""`    | Name of the exsiting secret to use for MQTT       |
+| mq.secretKey      | string | `""`    | Name of the key in mq.existingSecret use for MQTT |
+
+### DNS Parameters
+
+| Key               | Type   | Default   | Description                                       |
+|-------------------|--------|-----------|---------------------------------------------------|
+| dns.enabled       | bool   | `false`   | whether or not to run with DNS (CoreDNS)          |
+| dns.existingClaim | string | `""`      | Existing PVC claim name to use for CoreDNS        |
+| dns.storageSize   | string | `"128Mi"` | volume size for DNS (only needs to hold one file) |
 
 ### Misc Parameters
 
 | Key                                  | Type   | Default              | Description                                                                                       |
 |--------------------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
 | persistence.sharedData.existingClaim | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
-| dns.enabled                          | bool   | `false`              | whether or not to run with DNS (CoreDNS)                                                          |
-| dns.storageSize                      | string | `"128Mi"`            | volume size for DNS (only needs to hold one file)                                                 |
 | fullnameOverride                     | string | `""`                 | override the full name for netmaker objects                                                       |
 | image.pullPolicy                     | string | `"Always"`           | Pull Policy for images                                                                            |
 | image.repository                     | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
@@ -136,7 +151,6 @@ This will also require specifying a service address for DNS. Choose a valid ipv4
 | nameOverride                         | string | `""`                 | override the name for netmaker objects                                                            |
 | podAnnotations                       | object | `{}`                 | pod annotations to add                                                                            |
 | podSecurityContext                   | object | `{}`                 | pod security contect to add                                                                       |
-| mq.existingClaim                     | string | `""`                 | Existing PVC claim name to use for MQTT                                                           |
 | replicas                             | int    | `3`                  | number of netmaker server replicas to create                                                      |
 | service.mqPort                       | int    | `443`                | public port for MQ service                                                                        |
 | service.restPort                     | int    | `8081`               | port for API service                                                                              |

@@ -41,13 +41,24 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.name
+        {{- if .Values.postgresql.auth.existingSecret }}
+        - name: SQL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.postgresql.auth.existingSecret }}
+              key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
+        {{- end }}
+        {{- if .Values.mq.existingSecret }}
+        - name: MQ_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.mq.existingSecret }}
+              key: {{ .Values.mq.secretKey }}
+        {{- end }}
         envFrom:
           - configMapRef:
               name: {{ include "netmaker.fullname" . }}
-          {{- if .Values.existingSecret }}
-          - secretRef:
-              name: {{ .Values.existingSecret }}
-          {{- else }}
+          {{- if not .Values.existingSecret }}
           - secretRef:
               name: netmaker-secret
           {{- end }}

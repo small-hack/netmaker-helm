@@ -23,6 +23,7 @@ data:
   DATABASE: postgres
   SQL_HOST: "{{ include "netmaker.database.host" . }}"
   SQL_PORT: "{{ include "netmaker.database.port" . }}"
+  SQL_USER: "{{ include "netmaker.database.username" . }}"
   SQL_DB: "{{ include "netmaker.database.database" . }}"
   DISPLAY_KEYS: "on"
   MQ_HOST: {{ include "netmaker.fullname" . }}-mqtt
