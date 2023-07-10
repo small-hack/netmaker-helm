@@ -35,6 +35,14 @@ create image repo and tag based on appVersion and values input
 {{- end -}}
 {{- end }}
 
+{{- define "netmaker.ui.image" -}}
+{{- if .Values.image.tag -}}
+{{- printf "gravitl/netmaker-ui:%s" .Values.image.tag -}}
+{{- else -}}
+{{- printf "gravitl/netmaker-ui::%s" .Chart.AppVersion -}}
+{{- end -}}
+{{- end }}
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: {{ include "netmaker.fullname" . }}-ui
-        image: gravitl/netmaker-ui:{{ .Values.image.tag }}
+        image: {{ include "netmaker.ui.image" . }}
         ports:
         - containerPort: {{ .Values.service.uiPort }}
         env:
