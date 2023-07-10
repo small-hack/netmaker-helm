@@ -3,7 +3,7 @@ A Helm chart to run Netmaker with High Availability on Kubernetes.
 
 ![Version: 0.7.1](https://img.shields.io/badge/Version-0.7.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
-This is a fork of a fork of gravitl/netmaker-helm. This is a bit more actively maintained than the gravitl repo, and it moves a lot faster, and so it may be slightly unstable as we work out the kinks. Feel free to submit a PR/Issue if you want to add something or if something is broken.
+This is a fork of a fork of [gravitl/netmaker-helm](https://github.com/gravitl/netmaker-helm). This is a bit more actively maintained than the gravitl repo, and it moves a lot faster, and so it may be slightly unstable as we work out the kinks. Feel free to submit a PR/Issue if you want to add something or if something is broken.
 
 <!-- vim-markdown-toc GFM -->
 
