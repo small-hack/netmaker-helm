@@ -85,7 +85,7 @@ Password for postgresql
 */}}
 {{- define "netmaker.database.password" -}}
 {{- if .Values.postgresql.enabled }}
-{{- index .Values "postgresql" "password" }}
+{{- index .Values "postgresql" "auth" "password" }}
 {{- else }}
 {{- index .Values "external-postgresql" "password" }}
 {{- end }}
@@ -118,7 +118,7 @@ Database for postgresql
 */}}
 {{- define "netmaker.database.database" -}}
 {{- if .Values.postgresql.enabled }}
-{{- index .Values "postgresql" "postgresql" "auth" "database" }}
+{{- index .Values "postgresql" "auth" "database" }}
 {{- else }}
 {{- index .Values "external-postgresql" "database" }}
 {{- end }}
