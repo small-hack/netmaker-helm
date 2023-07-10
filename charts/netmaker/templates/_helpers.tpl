@@ -73,7 +73,7 @@ Create the name of the service account to use
 Username for postgresql
 */}}
 {{- define "netmaker.database.username" -}}
-{{- if .Values.database.internal }}
+{{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "username" }}
 {{- else }}
 {{- index .Values "external-postgresql" "username" }}
@@ -84,7 +84,7 @@ Username for postgresql
 Password for postgresql
 */}}
 {{- define "netmaker.database.password" -}}
-{{- if .Values.database.internal }}
+{{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "password" }}
 {{- else }}
 {{- index .Values "external-postgresql" "password" }}
@@ -95,7 +95,7 @@ Password for postgresql
 Host for postgresql
 */}}
 {{- define "netmaker.database.host" -}}
-{{- if .Values.database.internal }}
+{{- if .Values.postgresql.enabled }}
 {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}
 {{- else }}
 {{- index .Values "external-postgresql" "host" }}
@@ -106,7 +106,7 @@ Host for postgresql
 Port for postgresql
 */}}
 {{- define "netmaker.database.port" -}}
-{{- if .Values.database.internal }}
+{{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "containerPorts" "postgresql" }}
 {{- else }}
 {{- index .Values "external-postgresql" "port" }}
@@ -117,7 +117,7 @@ Port for postgresql
 Database for postgresql
 */}}
 {{- define "netmaker.database.database" -}}
-{{- if .Values.database.internal }}
+{{- if .Values.postgresql.enabled }}
 {{- index .Values "postgresql" "postgresql" "database" }}
 {{- else }}
 {{- index .Values "external-postgresql" "database" }}
