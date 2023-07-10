@@ -58,7 +58,7 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ include "netmaker.fullname" . }}
-          {{- if not .Values.existingSecret }}
+          {{- if not .Values.postgresql.auth.existingSecret }}
           - secretRef:
               name: netmaker-secret
           {{- end }}
