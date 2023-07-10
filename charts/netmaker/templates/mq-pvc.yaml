@@ -1,0 +1,14 @@
+---
+{{- if not .Values.mq.existingClaim }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "netmaker.fullname" . }}-shared-data-pvc
+spec:
+  storageClassName: {{ .Values.mq.RWX.storageClassName }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.mq.storageSize }}
+{{- end }}

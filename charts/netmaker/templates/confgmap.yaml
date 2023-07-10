@@ -28,10 +28,11 @@ data:
   DISPLAY_KEYS: "on"
   MQ_HOST: {{ include "netmaker.fullname" . }}-mqtt
   MQ_PORT: "{{ .Values.service.mqPort }}"
+  MQ_USERNAME: "{{ .Values.mq.username }}"
   MQ_SERVER_PORT: "1883"
   MASTER_KEY: {{ include "netmaker.masterKey" . }}
   PLATFORM: "Kubernetes"
   VERBOSITY: "3"
   {{- if .Values.oauth.enabled }}
-  AUTH_PROVIDER: {{ .Values.oauth.provider }}
+  AUTH_PROVIDER: "{{ .Values.oauth.provider }}"
   {{- end }}

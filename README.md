@@ -1,7 +1,7 @@
 # Netmaker Helm Chart Repo
 A Helm chart to run Netmaker with High Availability on Kubernetes.
 
-![Version: 0.7.1](https://img.shields.io/badge/Version-0.7.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
+![Version: 0.7.2](https://img.shields.io/badge/Version-0.7.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
 
 This is a fork of a fork of [gravitl/netmaker-helm](https://github.com/gravitl/netmaker-helm). This is a bit more actively maintained than the gravitl repo, and it moves a lot faster, and so it may be slightly unstable as we work out the kinks. Feel free to submit a PR/Issue if you want to add something or if something is broken.
 
@@ -141,11 +141,13 @@ To use the bitnami posgresql chart bundled with this chart, set `postgresql.enab
 
 The MQ Broker is deployed either with Ingress (Nginx or Traefik) preconfigured, or without. If you are using an ingress controller other than Nginx or Traefik, Netmaker's MQTT will not be complete. "broker.domain"  must reach the MQTT service at port 8883 over WSS (Secure Web Sockets).
 
-| Key               | Type   | Default | Description                                       |
-|-------------------|--------|---------|---------------------------------------------------|
-| mq.existingClaim  | string | `""`    | Existing PVC claim name to use for MQTT           |
-| mq.existingSecret | string | `""`    | Name of the exsiting secret to use for MQTT       |
-| mq.secretKey      | string | `""`    | Name of the key in mq.existingSecret use for MQTT |
+| Key               | Type   | Default | Description                                                                       |
+|-------------------|--------|---------|-----------------------------------------------------------------------------------|
+| mq.existingClaim  | string | `""`    | Existing PVC claim name to use for MQTT                                           |
+| mq.username       | string | `""`    | username to set for MQ access                                                     |
+| mq.password       | string | `""`    | password to set for MQ access                                                     |
+| mq.existingSecret | string | `""`    | Name of the exsiting secret to use for MQTT password instead of using mq.password |
+| mq.secretKey      | string | `""`    | Name of the key in mq.existingSecret use for MQTT password                        |
 
 ### DNS Parameters
 By Default, the helm chart will deploy without DNS enabled. To enable DNS, specify with:

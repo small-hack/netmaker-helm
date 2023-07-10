@@ -49,6 +49,7 @@ mq:
   replicas: 1
   singlenode: true
   storageSize: 128Mi
+  username: netmaker
   password: 3yyerWGdds43yegGR
   # name of an existing secret to use for mq password. If set, ignores mq.password
   existingSecret: ''
