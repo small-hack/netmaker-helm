@@ -26,6 +26,6 @@
       "fileFilters": [
         "**/Chart.yaml",
       ],
-      "executionMode": "branch",
+      "executionMode": "branch"
     }
 }
