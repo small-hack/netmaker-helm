@@ -27,6 +27,5 @@
         "**/Chart.yaml",
       ],
       "executionMode": "branch",
-    },
-  }
+    }
 }
