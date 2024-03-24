@@ -34,11 +34,6 @@ podAnnotations: {}
 podSecurityContext: {}
 # fsGroup: 2000
 
-persistence:
-  sharedData:
-    # if not specified, this will create HELM.RELEASE.NAME-shared-data-pvc by default
-    existingClaim: ""
-
 ui:
   # -- how many UI replicas to create
   replicas: 1
@@ -48,26 +43,26 @@ mq:
   # change to 2 or more and set singlenode to false if needed
   replicas: 1
   singlenode: true
-  storageSize: 128Mi
   username: netmaker
   password: 3yyerWGdds43yegGR
-  # name of an existing secret to use for mq password. If set, ignores mq.password
+  # -- name of an existing secret to use for mq password. If set, ignores mq.password
   existingSecret: ''
-  # name of key in existing secret to grab password from. If set, ignores mq.password
+  # -- name of key in existing secret to grab password from. If set, ignores mq.password
   secretKey: ''
-  # name of existing PVC claim to use. if set, RWX.storageClassName is ignored
+  # -- name of existing PVC claim to use. if set, storageClassName is ignored
   existingClaim: ""
-  RWX:
-    storageClassName: ""
+  accessMode: "ReadWriteMany"
+  storageClassName: ""
+  storage: 128Mi
 
 dns:
   # -- whether or not to deploy coredns
   enabled: false
-  # existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns-pvc
+  # -- existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns
   existingClaim: ''
-  storageSize: 128Mi
-  RWX:
-    storageClassName: ""
+  storage: 1Gi
+  storageClassName: ""
+  accessMode: ReadWriteOnce
 
 setIpForwarding:
   enabled: true

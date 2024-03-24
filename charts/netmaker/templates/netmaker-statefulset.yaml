@@ -125,23 +125,23 @@ spec:
         - mountPath: /etc/netmaker/
           name: shared-data
         {{- if .Values.dns.enabled }}
-        - name: {{ include "netmaker.fullname" . }}-dns-pvc
+        - name: dns-pvc
           mountPath: /root/config/dnsconfig
         {{- end }}
       volumes:
       - name: shared-data
         persistentVolumeClaim:
-          {{- if .Values.persistence.sharedData.existingClaim }}
-          claimName: {{ .Values.persistence.sharedData.existingClaim }}
+          {{- if .Values.mq.existingClaim }}
+          claimName: {{ .Values.mq.existingClaim }}
           {{- else }}
-          claimName: {{ include "netmaker.fullname" . }}-shared-data-pvc
+          claimName: {{ include "netmaker.fullname" . }}-shared-data
           {{- end }}
       {{- if .Values.dns.enabled }}
-      - name: {{ include "netmaker.fullname" . }}-dns-pvc
+      - name: dns-pvc
         persistentVolumeClaim:
           {{- if .Values.dns.existingClaim }}
           claimName: {{ .Values.dns.existingClaim }}
           {{- else }}
-          claimName: {{ include "netmaker.fullname" . }}-dns-pvc
+          claimName: {{ include "netmaker.fullname" . }}-dns
           {{- end }}
-      {{- end }}
+      {{- end }} {{/* end if dns.enabled */}}

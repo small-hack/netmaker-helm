@@ -3,12 +3,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ include "netmaker.fullname" . }}-shared-data-pvc
+  name: {{ include "netmaker.fullname" . }}-shared-data
 spec:
-  storageClassName: {{ .Values.mq.RWX.storageClassName }}
-  accessModes:
-    - ReadWriteMany
+  storageClassName: {{ .Values.mq.storageClassName }}
+  accessModes: [{{ .Values.mq.accessMode }}]
   resources:
     requests:
-      storage: {{ .Values.mq.storageSize }}
+      storage: {{ .Values.mq.storage }}
 {{- end }}

@@ -6,10 +6,10 @@ A Helm chart to run HA Netmaker on Kubernetes
 
 ## Maintainers
 
-| Name | Url |
-| ---- | --- |
-| jessebot | <https://github.com/jessebot/> |
-| cloudymax | <https://github.com/cloudymax/> |
+| Name | Email | Url |
+| ---- | ------ | --- |
+| jessebot | <jessebot@linux.com> | <https://github.com/jessebot/> |
+| cloudymax | <emax@cloudydev.net> | <https://github.com/cloudymax/> |
 
 ## Requirements
 
@@ -22,10 +22,11 @@ A Helm chart to run HA Netmaker on Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | baseDomain | string | `"example.com"` |  |
-| dns.RWX.storageClassName | string | `""` |  |
+| dns.accessMode | string | `"ReadWriteOnce"` |  |
 | dns.enabled | bool | `false` | whether or not to deploy coredns |
-| dns.existingClaim | string | `""` |  |
-| dns.storageSize | string | `"128Mi"` |  |
+| dns.existingClaim | string | `""` | existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns |
+| dns.storage | string | `"1Gi"` |  |
+| dns.storageClassName | string | `""` |  |
 | externalDatabase.database | string | `"netmaker"` | postgress db |
 | externalDatabase.existingSecret | string | `""` |  |
 | externalDatabase.host | string | `"external.postgres.url"` | postgres host |
@@ -54,14 +55,15 @@ A Helm chart to run HA Netmaker on Kubernetes
 | ingress.hostPrefix.ui | string | `"dashboard."` | ui route subdomain |
 | ingress.tls.enabled | bool | `false` |  |
 | ingress.tls.issuerName | string | `"letsencrypt-prod"` |  |
-| mq.RWX.storageClassName | string | `""` |  |
-| mq.existingClaim | string | `""` |  |
-| mq.existingSecret | string | `""` |  |
+| mq.accessMode | string | `"ReadWriteMany"` |  |
+| mq.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
+| mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password |
 | mq.password | string | `"3yyerWGdds43yegGR"` |  |
 | mq.replicas | int | `1` | how many MQTT replicas to create change to 2 or more and set singlenode to false if needed |
-| mq.secretKey | string | `""` |  |
+| mq.secretKey | string | `""` | name of key in existing secret to grab password from. If set, ignores mq.password |
 | mq.singlenode | bool | `true` |  |
-| mq.storageSize | string | `"128Mi"` |  |
+| mq.storage | string | `"128Mi"` |  |
+| mq.storageClassName | string | `""` |  |
 | mq.username | string | `"netmaker"` |  |
 | nameOverride | string | `""` | override the name for netmaker objects |
 | oauth.enabled | bool | `false` |  |
@@ -71,7 +73,6 @@ A Helm chart to run HA Netmaker on Kubernetes
 | oauth.secretKeys.clientSecret | string | `nil` |  |
 | oauth.secretKeys.frontendURL | string | `nil` |  |
 | oauth.secretKeys.issuer | string | `nil` |  |
-| persistence.sharedData.existingClaim | string | `""` |  |
 | podAnnotations | object | `{}` | pod annotations to add |
 | podSecurityContext | object | `{}` | pod security contect to add |
 | postgresql.auth.database | string | `"netmaker"` |  |
