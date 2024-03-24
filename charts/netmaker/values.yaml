@@ -154,8 +154,10 @@ postgresql:
     secretKeys:
       userPasswordKey: ""
       adminPasswordKey: ""
-  persistence:
-    existingClaim: ''
+    primary:
+      persistence:
+        enabled: true
+        # existingClaim: ''
 
 # if postgresql.enabled is false, these values are used instead
 externalDatabase:

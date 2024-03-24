@@ -21,7 +21,7 @@ data:
   CLIENT_MODE: "on"
   CORS_ALLOWED_ORIGIN: '*'
   DATABASE: postgres
-  SQL_HOST: "{{ include "netmaker.database.host" . }}"
+  SQL_HOST: "{{ include "netmaker.database.host" . | trim }}"
   SQL_PORT: "{{ include "netmaker.database.port" . }}"
   SQL_USER: "{{ include "netmaker.database.username" . }}"
   SQL_DB: "{{ include "netmaker.database.database" . }}"
