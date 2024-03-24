@@ -24,16 +24,16 @@ spec:
           securityContext:
             privileged: true
       dnsPolicy: ClusterFirstWithHostNet
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - {{ include "netmaker.fullname" . }}
-            topologyKey: "kubernetes.io/hostname"
+      #affinity:
+      #  podAntiAffinity:
+      #    requiredDuringSchedulingIgnoredDuringExecution:
+      #    - labelSelector:
+      #        matchExpressions:
+      #        - key: app
+      #          operator: In
+      #          values:
+      #          - {{ include "netmaker.fullname" . }}
+      #      topologyKey: "kubernetes.io/hostname"
       containers:
       - env:
         - name: NODE_ID
