@@ -6,10 +6,10 @@ A Helm chart to run HA Netmaker on Kubernetes
 
 ## Maintainers
 
-| Name | Email | Url |
-| ---- | ------ | --- |
-| jessebot | <jessebot@linux.com> | <https://github.com/jessebot/> |
-| cloudymax | <emax@cloudydev.net> | <https://github.com/cloudymax/> |
+| Name | Url |
+| ---- | --- |
+| jessebot | <https://github.com/jessebot/> |
+| cloudymax | <https://github.com/cloudymax/> |
 
 ## Requirements
 
