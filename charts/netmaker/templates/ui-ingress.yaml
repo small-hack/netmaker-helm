@@ -1,75 +1,31 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.ui.ingress.enabled -}}
 {{- $fullName := include "netmaker.fullname" . -}}
 {{- $fullUIName := printf "%s-%s" $fullName "ui" -}}
-{{- $fullRESTName := printf "%s-%s" $fullName "rest" -}}
-{{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
-{{- $uiSvcPort := .Values.service.uiPort -}}
-{{- $restSvcPort := .Values.service.restPort -}}
-{{- $mqSvcPort := 8883 -}}
-{{- $classname := required "A valid .Values.ingress.className entry required! Please set this to your ingress class (nginx, traefik)" .Values.ingress.className}}
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
-  {{- end }}
-{{- end }}
-{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ $fullUIName }}
   labels:
     {{- include "netmaker.labels" . | nindent 4 }}
-  {{- with .Values.ingress }}
+  {{- with .Values.ui.ingress.annotations }}
   annotations:
-    {{- toYaml .annotations.base | nindent 4 }}
-    {{- if or (eq .className "nginx") (eq .className "public") }}
-    {{- toYaml .annotations.nginx | nindent 4 }}
-    {{- end }}
-    {{- if eq .className "traefik" }}
-    {{- toYaml .annotations.traefik | nindent 4 }}
-    {{- end }}
-    {{- if and .tls.enabled (eq .tls.issuerName "" )}}
-    {{- toYaml .annotations.tls | nindent 4 }}
-    {{- else if .tls.enabled}}
-    cert-manager.io/cluster-issuer: {{ .tls.issuerName }}
-    {{- end }}
-    {{- with .annotations.ui }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- toYaml . }}
   {{- end }}
 spec:
-  {{- if (not (eq .Values.ingress.className "traefik")) }}
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ required "A valid .Values.ingress.className entry required!" .Values.ingress.className}}
-  {{- end }}
-  {{- end }}
-  {{- if .Values.ingress.tls.enabled }}
+  ingressClassName: {{ required "A valid .Values.ingress.className entry required!" .Values.ui.ingress.className}}
+  {{- with .Values.ui.ingress.tls }}
   tls:
-    - hosts:
-        - {{ .Values.ingress.hostPrefix.ui }}{{ .Values.baseDomain }}
-      secretName: {{ $fullUIName }}-tls-secret
+    {{- toYaml . }}
   {{- end}}
   rules:
-    - host: {{ .Values.ingress.hostPrefix.ui }}{{ .Values.baseDomain }}
+    - host: {{ .Values.ui.ingress.host }}
       http:
         paths:
           - path: /
-            {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: Prefix
-            {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ $fullUIName }}
                 port:
-                  number: {{ $uiSvcPort }}
-              {{- else }}
-              serviceName: {{ $fullUIName }}
-              servicePort: {{ $uiSvcPort }}
-              {{- end }}
+                  number: {{ .Values.ui.service.port }}
 {{- end }}

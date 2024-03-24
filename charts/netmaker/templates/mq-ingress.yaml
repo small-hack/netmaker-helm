@@ -1,54 +1,32 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.mq.ingress.enabled -}}
 {{- $fullName := include "netmaker.fullname" . -}}
 {{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
-{{- $mqSvcPort := 8883 -}}
-{{- $classname := required "A valid .Values.ingress.className entry required! Please set this to your ingress class (nginx, traefik)" .Values.ingress.className}}
 
-{{- if or (eq .Values.ingress.className "nginx") (eq .Values.ingress.className "public") }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullMQName }}
   labels:
     {{- include "netmaker.labels" . | nindent 4 }}
-  {{- with .Values.ingress }}
+  {{- with .Values.mq.ingress.annotations }}
   annotations:
-    {{- toYaml .annotations.nginx | nindent 4 }}
-    {{- if and .tls.enabled (eq .tls.issuerName "" )}}
-    {{- toYaml .annotations.tls | nindent 4 }}
-    {{- else if .tls.enabled}}
-    cert-manager.io/cluster-issuer: {{ .tls.issuerName }}
-    {{- end }}
-    {{- with .annotations.mq }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- toYaml . }}
   {{- end }}
 spec:
-  ingressClassName:  {{ required "A valid .Values.ingress.className entry required!" .Values.ingress.className}}
-  {{- if .Values.ingress.tls.enabled }}
+  ingressClassName:  {{ required "A valid .Values.ingress.className entry required!" .Values.mq.ingress.className}}
+  {{- with .Values.mq.ingress.tls }}
   tls:
-    - hosts:
-        - {{ .Values.ingress.hostPrefix.broker }}{{ .Values.baseDomain }}
-      secretName: {{ $fullMQName }}-tls-secret
+    {{- toYaml . }}
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.hostPrefix.broker }}{{ .Values.baseDomain }}
+    - host: {{ .Values.mq.ingress.host }}
       http:
         paths:
           - path: /
-            {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: Prefix
-            {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ $fullMQName }}
                 port:
-                  number: {{ $mqSvcPort }}
-              {{- else }}
-              serviceName: {{ $fullMQName }}
-              servicePort: {{ $mqSvcPort }}
-              {{- end }}
-{{- end }}
-
+                  number: {{ .Values.mq.service.targetPort }}
 {{- end }}

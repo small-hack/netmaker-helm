@@ -15,11 +15,11 @@ spec:
         app: {{ include "netmaker.fullname" . }}-ui
     spec:
       containers:
-      - name: {{ include "netmaker.fullname" . }}-ui
-        image: {{ include "netmaker.ui.image" . }}
-        ports:
-        - containerPort: {{ .Values.service.uiPort }}
-        env:
-        - name: BACKEND_URL
-          value: 'https://{{ .Values.ingress.hostPrefix.rest }}{{ required "A valid .Values.baseDomain entry required!" .Values.baseDomain}}'
+        - name: {{ include "netmaker.fullname" . }}-ui
+          image: {{ include "netmaker.ui.image" . }}
+          ports:
+            - containerPort: {{ .Values.ui.service.port }}
+          env:
+            - name: BACKEND_URL
+              value: 'https://{{ required "A valid .Values.api.ingress.host entry required!" .Values.api.ingress.host}}'
       terminationGracePeriodSeconds: 15

@@ -1,0 +1,31 @@
+{{- if .Values.api.ingress.enabled -}}
+{{- $fullName := include "netmaker.fullname" . -}}
+{{- $fullRESTName := printf "%s-%s" $fullName "api" -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullRESTName }}
+  labels:
+    {{- include "netmaker.labels" . | nindent 4 }}
+  {{- with .Values.api.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName:  {{ required "A valid .Values.ingress.className entry required!" .Values.api.ingress.className}}
+  {{- with .Values.api.ingress.tls }}
+  tls:
+    {{- toYaml . }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.api.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullRESTName }}
+                port:
+                  number: {{ .Values.api.service.port }}
+{{- end }}

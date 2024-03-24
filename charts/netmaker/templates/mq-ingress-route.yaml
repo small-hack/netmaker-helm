@@ -1,7 +1,6 @@
-{{- if and .Values.ingress.enabled (eq .Values.ingress.className "traefik") -}}
+{{- if and .Values.mq.ingress.enabled (eq .Values.mq.ingress.className "traefik") -}}
 {{- $fullName := include "netmaker.fullname" . -}}
 {{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
-{{- $mqSvcPort := 8883 -}}
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRouteTCP
 metadata:
@@ -12,13 +11,13 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: HostSNI(`{{ .Values.ingress.hostPrefix.mq }}{{ .Values.baseDomain }}`)
+  - match: HostSNI(`{{ .Values.mq.ingress.host }}`)
     services:
     - name: {{ $fullMQName }}
-      port: {{ $mqSvcPort }}
+      port: {{ .Values.mq.service.targetPort }}
   tls:
     passthrough: true
     secretName: {{ $fullMQName }}-tls-secret
     domains:
-    - main: {{ .Values.ingress.hostPrefix.mq }}{{ .Values.baseDomain }}
+    - main: {{ .Values.mq.ingress.host }}
 {{- end }}

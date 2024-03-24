@@ -1,6 +1,6 @@
 # netmaker
 
-![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.20.3](https://img.shields.io/badge/AppVersion-v0.20.3-informational?style=flat-square)
+![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.21.2](https://img.shields.io/badge/AppVersion-v0.21.2-informational?style=flat-square)
 
 A Helm chart to run HA Netmaker on Kubernetes
 
@@ -22,12 +22,19 @@ A Helm chart to run HA Netmaker on Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | optional affinity settings for netmaker |
-| baseDomain | string | `"example.com"` |  |
-| dns.accessMode | string | `"ReadWriteOnce"` |  |
+| api.ingress.annotations | object | `{}` | annotations for the netmaker API ingress object |
+| api.ingress.className | string | `"nginx"` | api ingress className |
+| api.ingress.enabled | bool | `true` | attempts to configure ingress if true |
+| api.ingress.host | string | `"api.cluster.local"` | api (REST) route subdomain |
+| api.ingress.tls | list | `[]` | ingress api tls list |
+| api.service.port | int | `8081` | port for API service |
+| api.service.targetPort | int | `8081` | targetport for API service |
+| api.service.type | string | `"ClusterIP"` | type for netmaker server services |
 | dns.enabled | bool | `false` | whether or not to deploy coredns |
-| dns.existingClaim | string | `""` | existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns |
-| dns.storage | string | `"1Gi"` |  |
-| dns.storageClassName | string | `""` |  |
+| dns.persistence.accessMode | string | `"ReadWriteOnce"` |  |
+| dns.persistence.existingClaim | string | `""` | existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns |
+| dns.persistence.storage | string | `"1Gi"` |  |
+| dns.persistence.storageClassName | string | `""` |  |
 | externalDatabase.database | string | `"netmaker"` | postgress db |
 | externalDatabase.existingSecret | string | `""` |  |
 | externalDatabase.host | string | `"external.postgres.url"` | postgres host |
@@ -39,33 +46,24 @@ A Helm chart to run HA Netmaker on Kubernetes
 | fullnameOverride | string | `""` | override the full name for netmaker objects |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull Policy for images |
 | image.repository | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from |
-| ingress.annotations.base."kubernetes.io/ingress.allow-http" | string | `"false"` | annotation to generate ACME certs if available |
-| ingress.annotations.mq | object | `{}` |  |
-| ingress.annotations.nginx."nginx.ingress.kubernetes.io/rewrite-target" | string | `"/"` | destination addr for route |
-| ingress.annotations.nginx."nginx.ingress.kubernetes.io/ssl-redirect" | string | `"true"` | Redirect http to https |
-| ingress.annotations.rest | object | `{}` |  |
-| ingress.annotations.tls."kubernetes.io/tls-acme" | string | `"true"` | use acme cert if available |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-entry-point" | string | `"https"` | Redirect to https |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-permanent" | string | `"true"` | Redirect to https permanently |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/rule-type" | string | `"PathPrefixStrip"` | rule type |
-| ingress.annotations.ui | object | `{}` |  |
-| ingress.className | string | `"nginx"` |  |
-| ingress.enabled | bool | `true` | attempts to configure ingress if true |
-| ingress.hostPrefix.broker | string | `"broker."` | mqtt route subdomain |
-| ingress.hostPrefix.rest | string | `"api."` | api (REST) route subdomain |
-| ingress.hostPrefix.ui | string | `"dashboard."` | ui route subdomain |
-| ingress.tls.enabled | bool | `false` |  |
-| ingress.tls.issuerName | string | `"letsencrypt-prod"` |  |
-| mq.accessMode | string | `"ReadWriteMany"` |  |
 | mq.affinity | object | `{}` | optional affinity settings for mqtt |
-| mq.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
 | mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password |
-| mq.password | string | `"3yyerWGdds43yegGR"` |  |
-| mq.replicas | int | `1` | how many MQTT replicas to create change to 2 or more and set singlenode to false if needed |
+| mq.generateCert | bool | `false` |  |
+| mq.ingress.annotations | object | `{}` | annotations for the mqtt ingress object |
+| mq.ingress.className | string | `"nginx"` |  |
+| mq.ingress.enabled | bool | `true` | attempts to configure ingress if true |
+| mq.ingress.host | string | `"broker.cluster.local"` | hostname for mqtt ingress |
+| mq.ingress.tls | list | `[]` | ingress tls list |
+| mq.password | string | `""` |  |
+| mq.persistence.accessMode | string | `"ReadWriteMany"` |  |
+| mq.persistence.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
+| mq.persistence.storage | string | `"128Mi"` |  |
+| mq.persistence.storageClassName | string | `""` |  |
+| mq.replicas | int | `1` | how many MQTT replicas to create |
 | mq.secretKey | string | `""` | name of key in existing secret to grab password from. If set, ignores mq.password |
-| mq.singlenode | bool | `true` |  |
-| mq.storage | string | `"128Mi"` |  |
-| mq.storageClassName | string | `""` |  |
+| mq.service.port | int | `443` | port for MQTT service |
+| mq.service.targetPort | int | `8883` | Target port for MQTT service |
+| mq.service.type | string | `"ClusterIP"` | type for netmaker server services |
 | mq.tolerations | object | `{}` | optional tolerations settings for mqtt |
 | mq.username | string | `"netmaker"` |  |
 | nameOverride | string | `""` | override the name for netmaker objects |
@@ -87,21 +85,25 @@ A Helm chart to run HA Netmaker on Kubernetes
 | postgresql.auth.username | string | `"netmaker"` |  |
 | postgresql.enabled | bool | `true` |  |
 | replicas | int | `1` | number of netmaker server replicas to create |
-| service.mqPort | int | `443` | port for MQTT service |
-| service.restPort | int | `8081` | port for API service |
-| service.type | string | `"ClusterIP"` | type for netmaker server services |
-| service.uiPort | int | `80` | port for UI service |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
 | setIpForwarding.enabled | bool | `true` |  |
 | tolerations | object | `{}` | optional tolerations settings for netmaker |
+| ui.ingress.annotations | object | `{}` | annotations for the netmaker UI ingress object |
+| ui.ingress.className | string | `"nginx"` | UI ingress className |
+| ui.ingress.enabled | bool | `true` | attempts to configure ingress if true |
+| ui.ingress.host | string | `"dashboard.cluster.local"` | hostname for mqtt ingress |
+| ui.ingress.tls | list | `[]` | ingress tls list |
 | ui.replicas | int | `1` | how many UI replicas to create |
+| ui.service.port | int | `80` | port for UI service |
+| ui.service.targetport | int | `80` | target port for UI service |
+| ui.service.type | string | `"ClusterIP"` | type for netmaker server services |
 | wireguard.enabled | bool | `true` | whether or not to use WireGuard on server |
 | wireguard.kernel | bool | `false` | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts). |
 | wireguard.networkLimit | int | `10` | max number of networks that Netmaker will support if running with WireGuard enabled |
 | wireguard.service.annotations | object | `{}` |  |
-| wireguard.service.serviceType | string | `"NodePort"` |  |
+| wireguard.service.type | string | `"NodePort"` |  |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.13.1](https://github.com/norwoodj/helm-docs/releases/v1.13.1)

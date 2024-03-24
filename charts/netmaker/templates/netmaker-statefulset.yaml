@@ -120,7 +120,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ include "netmaker.fullname" . }}
         ports:
-        - containerPort: {{ .Values.service.restPort }}
+        - containerPort: {{ .Values.api.service.port }}
           protocol: TCP
       {{- if .Values.wireguard.enabled }}
         {{ $count := (add .Values.wireguard.networkLimit 1 | int) }}
