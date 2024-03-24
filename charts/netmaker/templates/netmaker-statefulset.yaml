@@ -76,7 +76,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ .Values.oauth.existingSecret }}
-              key: {{ .Values.oauth.secretKeys.authProvider }}
+              key: {{ .Values.oauth.secretKeys.auth_provider }}
         - name: CLIENT_ID 
           valueFrom:
             secretKeyRef:
