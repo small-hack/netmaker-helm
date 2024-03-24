@@ -145,16 +145,16 @@ spec:
       volumes:
       - name: shared-data
         persistentVolumeClaim:
-          {{- if .Values.mq.existingClaim }}
-          claimName: {{ .Values.mq.existingClaim }}
+          {{- if .Values.mq.persistence.existingClaim }}
+          claimName: {{ .Values.mq.persistence.existingClaim }}
           {{- else }}
           claimName: {{ include "netmaker.fullname" . }}-shared-data
           {{- end }}
       {{- if .Values.dns.enabled }}
       - name: dns-pvc
         persistentVolumeClaim:
-          {{- if .Values.dns.existingClaim }}
-          claimName: {{ .Values.dns.existingClaim }}
+          {{- if .Values.dns.persistence.existingClaim }}
+          claimName: {{ .Values.dns.persistence.existingClaim }}
           {{- else }}
           claimName: {{ include "netmaker.fullname" . }}-dns
           {{- end }}

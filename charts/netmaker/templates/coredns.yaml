@@ -47,8 +47,8 @@ spec:
       volumes:
       - name: dns-pvc
         persistentVolumeClaim:
-          {{- if .Values.dns.existingClaim }}
-          claimName: {{ .Values.dns.existingClaim }}
+          {{- if .Values.dns.persistence.existingClaim }}
+          claimName: {{ .Values.dns.persistence.existingClaim }}
           {{- else }}
           claimName: {{ include "netmaker.fullname" . }}-dns
           {{- end }}

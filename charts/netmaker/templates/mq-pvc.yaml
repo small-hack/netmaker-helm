@@ -1,13 +1,13 @@
 ---
-{{- if not .Values.mq.existingClaim }}
+{{- if not .Values.mq.persistence.existingClaim }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ include "netmaker.fullname" . }}-shared-data
 spec:
-  storageClassName: {{ .Values.mq.storageClassName }}
-  accessModes: [{{ .Values.mq.accessMode }}]
+  storageClassName: {{ .Values.mq.persistence.storageClassName }}
+  accessModes: [{{ .Values.mq.persistence.accessMode }}]
   resources:
     requests:
-      storage: {{ .Values.mq.storage }}
+      storage: {{ .Values.mq.persistence.storage }}
 {{- end }}

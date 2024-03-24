@@ -1,12 +1,12 @@
-{{- if and .Values.dns.enabled (not .Values.dns.existingClaim) -}}
+{{- if and .Values.dns.enabled (not .Values.dns.persistence.existingClaim) -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "netmaker.fullname" . }}-dns
 spec:
-  storageClassName: {{ required "A valid .Values.dns.storageClassName entry required! Specify an available storage class." .Values.dns.storageClassName}}
-  accessModes: [{{ .Values.dns.accessMode }}]
+  storageClassName: {{ required "A valid .Values.dns.storageClassName entry required! Specify an available storage class." .Values.dns.persistence.storageClassName}}
+  accessModes: [{{ .Values.dns.persistence.accessMode }}]
   resources:
     requests:
-      storage: {{ .Values.dns.storage }}
+      storage: {{ .Values.dns.persistence.storage }}
 {{- end }}
