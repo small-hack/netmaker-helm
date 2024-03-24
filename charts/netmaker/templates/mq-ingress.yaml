@@ -1,7 +1,6 @@
 {{- if .Values.mq.ingress.enabled -}}
 {{- $fullName := include "netmaker.fullname" . -}}
 {{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
