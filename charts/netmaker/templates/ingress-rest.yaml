@@ -1,24 +1,14 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "netmaker.fullname" . -}}
-{{- $fullUIName := printf "%s-%s" $fullName "ui" -}}
 {{- $fullRESTName := printf "%s-%s" $fullName "rest" -}}
-{{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
-{{- $uiSvcPort := .Values.service.uiPort -}}
 {{- $restSvcPort := .Values.service.restPort -}}
-{{- $mqSvcPort := 8883 -}}
 {{- $classname := required "A valid .Values.ingress.className entry required! Please set this to your ingress class (nginx, traefik)" .Values.ingress.className}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
   {{- end }}
 {{- end }}
-{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ $fullRESTName }}
@@ -44,9 +34,7 @@ metadata:
   {{- end }}
 spec:
   {{- if (not (eq .Values.ingress.className "traefik")) }}
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName:  {{ required "A valid .Values.ingress.className entry required!" .Values.ingress.className}}
-  {{- end }}
   {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
