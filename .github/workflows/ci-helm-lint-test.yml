@@ -56,4 +56,6 @@ jobs:
       - name: Run chart-testing (install)
         id: install
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=mq.storageClassName=longhorn --set=dns.storageClassName=longhorn"
+        # install the chart using longhorn pvcs
+        run: |
+            ct install --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=mq.storageClassName=standard --set=dns.storageClassName=standard"
