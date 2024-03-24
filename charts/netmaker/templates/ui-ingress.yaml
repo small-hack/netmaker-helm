@@ -15,7 +15,7 @@ spec:
   ingressClassName: {{ required "A valid .Values.ingress.className entry required!" .Values.ui.ingress.className}}
   {{- with .Values.ui.ingress.tls }}
   tls:
-    {{- toYaml . }}
+    {{- toYaml . | nindent 4 }}
   {{- end}}
   rules:
     - host: {{ .Values.ui.ingress.host }}
