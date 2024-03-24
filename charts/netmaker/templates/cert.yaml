@@ -1,0 +1,36 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "netmaker.fullname" . -}}
+{{- $fullUIName := printf "%s-%s" $fullName "ui" -}}
+{{- $fullRESTName := printf "%s-%s" $fullName "rest" -}}
+{{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
+{{- $uiSvcPort := .Values.service.uiPort -}}
+{{- $restSvcPort := .Values.service.restPort -}}
+{{- $mqSvcPort := 8883 -}}
+{{- $classname := required "A valid .Values.ingress.className entry required! Please set this to your ingress class (nginx, traefik)" .Values.ingress.className}}
+{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if and .Values.ingress.tls.enabled (not (eq .Values.ingress.tls.issuerName "" ))}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-override-ingress-name: {{ $fullMQName }}
+  labels:
+    {{- include "netmaker.labels" . | nindent 4 }}
+  name: {{ $fullMQName }}-tls-secret
+spec:
+  dnsNames:
+  - {{ .Values.ingress.hostPrefix.mq }}{{ .Values.baseDomain }}
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name:  {{ .Values.ingress.tls.issuerName }}
+  secretName: {{ $fullMQName }}-tls-secret
+  usages:
+  - digital signature
+  - key encipherment
+{{- end }}
+{{- end }}
