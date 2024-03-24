@@ -19,6 +19,23 @@ nameOverride: ""
 # -- override the full name for netmaker objects
 fullnameOverride: ""
 
+# -- optional tolerations settings for netmaker
+tolerations: {}
+
+# -- optional affinity settings for netmaker
+affinity: {}
+# example affinity
+# affinity:
+#   podAntiAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#     - labelSelector:
+#         matchExpressions:
+#         - key: app
+#           operator: In
+#           values:
+#           - {{ include "netmaker.fullname" . }}
+#       topologyKey: "kubernetes.io/hostname"
+
 serviceAccount:
   # -- Specifies whether a service account should be created
   create: true

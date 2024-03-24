@@ -21,6 +21,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| affinity | object | `{}` | optional affinity settings for netmaker |
 | baseDomain | string | `"example.com"` |  |
 | dns.accessMode | string | `"ReadWriteOnce"` |  |
 | dns.enabled | bool | `false` | whether or not to deploy coredns |
@@ -94,6 +95,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
 | setIpForwarding.enabled | bool | `true` |  |
+| tolerations | object | `{}` | optional tolerations settings for netmaker |
 | ui.replicas | int | `1` | how many UI replicas to create |
 | wireguard.enabled | bool | `true` | whether or not to use WireGuard on server |
 | wireguard.kernel | bool | `false` | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts). |
