@@ -43,6 +43,18 @@ mq:
   # change to 2 or more and set singlenode to false if needed
   replicas: 1
   singlenode: true
+  # -- optional tolerations settings for mqtt
+  tolerations: {}
+  # -- optional affinity settings for mqtt
+  affinity: {}
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #     - matchExpressions:
+  #       - key: mqhost
+  #         operator: In
+  #         values:
+  #         - "true"
   username: netmaker
   password: 3yyerWGdds43yegGR
   # -- name of an existing secret to use for mq password. If set, ignores mq.password

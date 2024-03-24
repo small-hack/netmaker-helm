@@ -56,6 +56,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 | ingress.tls.enabled | bool | `false` |  |
 | ingress.tls.issuerName | string | `"letsencrypt-prod"` |  |
 | mq.accessMode | string | `"ReadWriteMany"` |  |
+| mq.affinity | object | `{}` | optional affinity settings for mqtt |
 | mq.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
 | mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password |
 | mq.password | string | `"3yyerWGdds43yegGR"` |  |
@@ -64,6 +65,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 | mq.singlenode | bool | `true` |  |
 | mq.storage | string | `"128Mi"` |  |
 | mq.storageClassName | string | `""` |  |
+| mq.tolerations | object | `{}` | optional tolerations settings for mqtt |
 | mq.username | string | `"netmaker"` |  |
 | nameOverride | string | `""` | override the name for netmaker objects |
 | oauth.enabled | bool | `false` |  |

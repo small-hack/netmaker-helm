@@ -16,16 +16,13 @@ spec:
       labels:
         app: {{ include "netmaker.fullname" . }}-mqtt
     spec:
-      {{- if .Values.mq.singlenode }}    
+      {{- with .Values.mq.affinity }}
       affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: mqhost
-                operator: In
-                values:
-                - "true"
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mq.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
       - env:
