@@ -9,7 +9,7 @@ metadata:
     {{- include "netmaker.labels" . | nindent 4 }}
   {{- with .Values.mq.ingress.annotations }}
   annotations:
-    {{- toYaml . }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   ingressClassName:  {{ required "A valid .Values.ingress.className entry required!" .Values.mq.ingress.className}}
