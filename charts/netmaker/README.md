@@ -8,7 +8,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/bitnamicharts | postgresql | 12.9.0 |
+| oci://registry-1.docker.io/bitnamicharts | postgresql | 15.1.2 |
 
 ## Values
 
