@@ -66,5 +66,3 @@ spec:
               servicePort: {{ $mqSvcPort }}
               {{- end }}
 {{- end }}
-{{- end }}
-{{- end }}
