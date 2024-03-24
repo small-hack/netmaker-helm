@@ -1,19 +1,7 @@
-{{- if .Values.ingress.enabled -}}
+{{- if and .Values.ingress.enabled (eq .Values.ingress.className "traefik") -}}
 {{- $fullName := include "netmaker.fullname" . -}}
-{{- $fullUIName := printf "%s-%s" $fullName "ui" -}}
-{{- $fullRESTName := printf "%s-%s" $fullName "rest" -}}
 {{- $fullMQName := printf "%s-%s" $fullName "mqtt" -}}
-{{- $uiSvcPort := .Values.service.uiPort -}}
-{{- $restSvcPort := .Values.service.restPort -}}
 {{- $mqSvcPort := 8883 -}}
-{{- $classname := required "A valid .Values.ingress.className entry required! Please set this to your ingress class (nginx, traefik)" .Values.ingress.className}}
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
-  {{- end }}
-{{- end }}
-{{- if eq .Values.ingress.className "traefik" }}
----
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRouteTCP
 metadata:
@@ -33,5 +21,4 @@ spec:
     secretName: {{ $fullMQName }}-tls-secret
     domains:
     - main: {{ .Values.ingress.hostPrefix.mq }}{{ .Values.baseDomain }}
-{{- end }}
 {{- end }}
