@@ -59,6 +59,16 @@ spec:
               key: {{ .Values.mq.secretKey }}
         {{- end }}
         {{- if .Values.oauth.enabled }}
+        - name: SERVER_HTTP_HOST 
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.serverHttpHost }}
+        - name: AUTH_PROVIDER 
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.oauth.existingSecret }}
+              key: {{ .Values.oauth.secretKeys.authProvider }}
         - name: CLIENT_ID 
           valueFrom:
             secretKeyRef:
