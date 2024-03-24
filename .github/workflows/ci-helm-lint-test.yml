@@ -49,13 +49,11 @@ jobs:
 
       - name: Install longhorn
         run: |
-          helm repo add longhorn https://charts.longhorn.io
-          helm repo update
-          helm install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace
+          kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.6.0/deploy/longhorn.yaml
 
       - name: Run chart-testing (install)
         id: install
         if: steps.list-changed.outputs.changed == 'true'
         # install the chart using longhorn pvcs
         run: |
-            ct install --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=mq.storageClassName=standard --set=dns.storageClassName=standard"
+            ct install --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=mq.storageClassName=longhorn --set=dns.storageClassName=longhorn"
