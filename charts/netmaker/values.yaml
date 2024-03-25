@@ -50,7 +50,7 @@ podSecurityContext: {}
 # fsGroup: 2000
 
 netmaker:
-  serverName: "mynemakerhostname.tld"
+  serverName: "cluster.local"
   # -- ignored if netmaker.masterKeyExistingSecret is set
   masterKey: "netmaker"
   # -- Duration of JWT token validity in seconds

@@ -75,7 +75,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 | netmaker.oauth.issuer | string | `""` | oidc issuer - ignored if netmaker.oauth.existingSecret is set |
 | netmaker.oauth.provider | string | `"oidc"` | AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc |
 | netmaker.racAutoDisable | string | `"true"` | Auto disable a user's connecteds clients bassed on JWT token expiration |
-| netmaker.serverName | string | `"mynemakerhostname.tld"` |  |
+| netmaker.serverName | string | `"cluster.local"` |  |
 | podAnnotations | object | `{}` | pod annotations to add |
 | podSecurityContext | object | `{}` | pod security contect to add |
 | postgresql.auth.database | string | `"netmaker"` |  |

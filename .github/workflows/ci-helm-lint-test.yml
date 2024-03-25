@@ -41,19 +41,12 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --target-branch ${{ github.event.repository.default_branch }}
 
-      - name: Create K3s cluster
-        uses: debianmaster/actions-k3s@master
-        id: k3s
-        with:
-          version: 'latest'
-
-      - name: Install longhorn
-        run: |
-          kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.6.0/deploy/longhorn.yaml
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.9.0
+        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
         id: install
         if: steps.list-changed.outputs.changed == 'true'
-        # install the chart using longhorn pvcs
         run: |
-            ct install --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=mq.storageClassName=longhorn --set=dns.storageClassName=longhorn"
+            ct install --target-branch ${{ github.event.repository.default_branch }}
