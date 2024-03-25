@@ -36,18 +36,17 @@ A Helm chart to run HA Netmaker on Kubernetes
 | dns.persistence.storage | string | `"1Gi"` |  |
 | dns.persistence.storageClassName | string | `""` |  |
 | externalDatabase.database | string | `"netmaker"` | postgress db |
-| externalDatabase.existingSecret | string | `""` |  |
+| externalDatabase.existingSecret | string | `""` | use existing secret for netmaker db credentials, must have the following keys: SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB |
 | externalDatabase.host | string | `"external.postgres.url"` | postgres host |
 | externalDatabase.password | string | `""` | postgres pass for netmaker user. ignored if existingSecret is set |
 | externalDatabase.port | int | `5432` | postgres hosts port |
-| externalDatabase.secretKeys.passwordKey | string | `""` |  |
 | externalDatabase.type | string | `"postgresql"` |  |
 | externalDatabase.username | string | `"netmaker"` | postgres username |
 | fullnameOverride | string | `""` | override the full name for netmaker objects |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull Policy for images |
 | image.repository | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from |
 | mq.affinity | object | `{}` | optional affinity settings for mqtt |
-| mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password |
+| mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password, mq.username secret keys must be: MQ_PASSWORD, MQ_USERNAME |
 | mq.generateCert | bool | `false` |  |
 | mq.ingress.annotations | object | `{}` | annotations for the mqtt ingress object |
 | mq.ingress.className | string | `"nginx"` |  |
@@ -56,7 +55,6 @@ A Helm chart to run HA Netmaker on Kubernetes
 | mq.ingress.tls | list | `[]` | ingress tls list |
 | mq.password | string | `""` |  |
 | mq.replicas | int | `1` | how many MQTT replicas to create |
-| mq.secretKey | string | `""` | name of key in existing secret to grab password from. If set, ignores mq.password |
 | mq.service.port | int | `443` | port for MQTT service |
 | mq.service.targetPort | int | `8883` | Target port for MQTT service |
 | mq.service.type | string | `"ClusterIP"` | type for netmaker server services |
@@ -66,34 +64,24 @@ A Helm chart to run HA Netmaker on Kubernetes
 | netmaker.enterprise | object | `{"licenseKey":"","tenantId":""}` | if using enterprise edition fill out this section |
 | netmaker.enterprise.licenseKey | string | `""` | netmaker enterprise license key, ignored if netmaker.existingSecret set |
 | netmaker.enterprise.tenantId | string | `""` | netmaker enterprise tenant ID, ignored if netmaker.existingSecret set |
-| netmaker.existingSecret | string | `""` | if set ignores netmaker.masterKey and enterprise.* |
+| netmaker.existingSecret | string | `""` | if set ignores netmaker.masterKey and enterprise.* must have key called MASTER_KEY, optionally for enterprise must have key: LICENSE_KEY, NETMAKER_TENANT_ID |
 | netmaker.jwtDuration | int | `43200` | Duration of JWT token validity in seconds |
 | netmaker.masterKey | string | `"netmaker"` | ignored if netmaker.masterKeyExistingSecret is set |
 | netmaker.oauth.azureTenant | string | `""` | azureTenant if using azure for oauth - ignored if netmaker.oauth.existingSecret is set |
 | netmaker.oauth.clientID | string | `""` | client id if using oidc - ignored if netmaker.oauth.existingSecret is set |
 | netmaker.oauth.clientSecret | string | `""` | client secret if using oidc - ignored if netmaker.oauth.existingSecret is set |
 | netmaker.oauth.enabled | bool | `false` |  |
-| netmaker.oauth.existingSecret | string | `""` |  |
+| netmaker.oauth.existingSecret | string | `""` | existing secret for oauth, must have the following keys: CLIENT_ID, CLIENT_SECRET, OIDC_ISSUER, and optionally AZURE_TENANT ignores plane text values if this is set |
 | netmaker.oauth.issuer | string | `""` | oidc issuer - ignored if netmaker.oauth.existingSecret is set |
 | netmaker.oauth.provider | string | `"oidc"` | AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc |
-| netmaker.oauth.secretKeys.azureTenant | string | `""` |  |
-| netmaker.oauth.secretKeys.clientID | string | `""` |  |
-| netmaker.oauth.secretKeys.clientSecret | string | `""` |  |
-| netmaker.oauth.secretKeys.frontendURL | string | `""` |  |
-| netmaker.oauth.secretKeys.issuer | string | `""` |  |
 | netmaker.racAutoDisable | string | `"true"` | Auto disable a user's connecteds clients bassed on JWT token expiration |
-| netmaker.secretKeys.licenseKey | string | `""` |  |
-| netmaker.secretKeys.masterKey | string | `""` |  |
-| netmaker.secretKeys.tenantId | string | `""` |  |
 | netmaker.serverName | string | `"mynemakerhostname.tld"` |  |
 | podAnnotations | object | `{}` | pod annotations to add |
 | podSecurityContext | object | `{}` | pod security contect to add |
 | postgresql.auth.database | string | `"netmaker"` |  |
-| postgresql.auth.existingSecret | string | `""` |  |
+| postgresql.auth.existingSecret | string | `""` | use existing secret for netmaker db credentials, must have the following keys: SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB |
 | postgresql.auth.password | string | `""` |  |
 | postgresql.auth.primary.persistence.enabled | bool | `true` |  |
-| postgresql.auth.secretKeys.adminPasswordKey | string | `""` |  |
-| postgresql.auth.secretKeys.userPasswordKey | string | `""` |  |
 | postgresql.auth.username | string | `"netmaker"` |  |
 | postgresql.enabled | bool | `true` |  |
 | replicas | int | `1` | number of netmaker server replicas to create |
@@ -108,13 +96,9 @@ A Helm chart to run HA Netmaker on Kubernetes
 | tolerations | object | `{}` | optional tolerations settings for netmaker |
 | turn.apiHost | string | `""` |  |
 | turn.enabled | bool | `false` | use an external turn server |
-| turn.existingSecret | string | `""` | existing secret with turn server info |
+| turn.existingSecret | string | `""` | existing secret with turn server info. Must have the following keys: TURN_SERVER_HOST, TURN_SERVER_API_HOST, TURN_PORT, TURN_USERNAME, TURN_PASSWORD |
 | turn.host | string | `""` |  |
 | turn.password | string | `""` |  |
-| turn.secretKeys.apiHost | string | `""` |  |
-| turn.secretKeys.host | string | `""` |  |
-| turn.secretKeys.password | string | `""` |  |
-| turn.secretKeys.username | string | `""` |  |
 | turn.username | string | `""` |  |
 | ui.ingress.annotations | object | `{}` | annotations for the netmaker UI ingress object |
 | ui.ingress.className | string | `"nginx"` | UI ingress className |

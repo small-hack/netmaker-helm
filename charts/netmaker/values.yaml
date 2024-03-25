@@ -66,11 +66,9 @@ netmaker:
     tenantId: ""
 
   # -- if set ignores netmaker.masterKey and enterprise.*
+  # must have key called MASTER_KEY, optionally for enterprise must have key:
+  # LICENSE_KEY, NETMAKER_TENANT_ID
   existingSecret: ""
-  secretKeys:
-    licenseKey: ""
-    tenantId: ""
-    masterKey: ""
 
   # OAuth section
   oauth:
@@ -85,18 +83,10 @@ netmaker:
     clientSecret: ""
     # --  azureTenant if using azure for oauth - ignored if netmaker.oauth.existingSecret is set
     azureTenant: ""
+    # -- existing secret for oauth, must have the following keys:
+    # CLIENT_ID, CLIENT_SECRET, OIDC_ISSUER, and optionally AZURE_TENANT
+    # ignores plane text values if this is set
     existingSecret: ""
-    secretKeys:
-      # CLIENT_ID - client id of your oauth provider
-      clientID: ""
-      # CLIENT_SECRET - client secret of your oauth provider
-      clientSecret: ""
-      # FRONTEND_URL - https://dashboard.<netmaker base domain> <-- untested
-      frontendURL: ""
-      # OIDC_ISSUER - https://oidc.yourprovider.com - URL of oidc provider
-      issuer: ""
-      # AZURE_TENANT - only for azure, you may optionally specify the tenant for the OAuth
-      azureTenant: ""
 
 api:
   service:
@@ -167,10 +157,9 @@ mq:
   #         - "true"
   username: netmaker
   password: ''
-  # -- name of an existing secret to use for mq password. If set, ignores mq.password
+  # -- name of an existing secret to use for mq password. If set, ignores mq.password, mq.username
+  # secret keys must be: MQ_PASSWORD, MQ_USERNAME
   existingSecret: ''
-  # -- name of key in existing secret to grab password from. If set, ignores mq.password
-  secretKey: ''
   service:
     # -- type for netmaker server services
     type: ClusterIP
@@ -243,16 +232,9 @@ postgresql:
     # be rotated on each upgrade:
     # https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrade
     password: ""
-    # Set the password for the "postgres" admin user
-    # set this to the same value as above if you've previously installed
-    # this chart and you're having problems getting mastodon to connect to the DB
-    # postgresPassword: ""
-    # you can also specify the name of an existing Secret
-    # with a key of password set to the password you want
+    # -- use existing secret for netmaker db credentials, must have the following keys:
+    # SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB
     existingSecret: ""
-    secretKeys:
-      userPasswordKey: ""
-      adminPasswordKey: ""
     primary:
       persistence:
         enabled: true
@@ -272,10 +254,9 @@ externalDatabase:
   password: ""
   # -- postgress db
   database: netmaker
-  # use existing secret for netmaker user's password
+  # -- use existing secret for netmaker db credentials, must have the following keys:
+  # SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB
   existingSecret: ""
-  secretKeys:
-    passwordKey: ""
 
 turn:
   # -- use an external turn server
@@ -284,11 +265,6 @@ turn:
   apiHost: ""
   username: ""
   password: ""
-  # -- existing secret with turn server info
+  # -- existing secret with turn server info. Must have the following keys:
+  # TURN_SERVER_HOST, TURN_SERVER_API_HOST, TURN_PORT, TURN_USERNAME, TURN_PASSWORD
   existingSecret: ""
-  # keys for the existing turn server secret
-  secretKeys:
-    host: ""
-    apiHost: ""
-    username: ""
-    password: ""

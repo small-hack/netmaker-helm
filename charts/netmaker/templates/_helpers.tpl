@@ -144,3 +144,49 @@ Database for postgresql
 {{- index .Values "externalDatabase" "database" }}
 {{- end }}
 {{- end }}
+
+{{/*
+netmaker db secret
+*/}}
+{{- define "netmaker.db.secret" -}}
+{{- if .Values.postgresql.auth.existingSecret }}
+{{ print "%s" .Values.postgresql.auth.existingSecret }}
+{{- else if .Values.externalDatabase.existingSecret }}
+{{ print "%s" .Values.externalDatabase.existingSecret }}
+{{- else }}
+{{ print "db-secret" }}
+{{- end }}
+{{- end }}
+
+{{/*
+netmaker secret
+*/}}
+{{- define "netmaker.secret" -}}
+{{- if .Values.netmaker.existingSecret }}
+{{ print "%s" .Values.netmaker.existingSecret }}
+{{- else }}
+{{ print "netmaker-secret" }}
+{{- end }}
+{{- end }}
+
+{{/*
+netmaker oauth secret
+*/}}
+{{- define "netmaker.oauth.secret" -}}
+{{- if .Values.netmaker.oauth.existingSecret }}
+{{ print "%s" .Values.netmaker.oauth.existingSecret }}
+{{- else }}
+{{ print "netmaker-oauth-secret" }}
+{{- end }}
+{{- end }}
+
+{{/*
+netmaker turn secret
+*/}}
+{{- define "netmaker.turn.secret" -}}
+{{- if .Values.netmaker.turn.existingSecret }}
+{{ print "%s" .Values.netmaker.turn.existingSecret }}
+{{- else }}
+{{ print "turn-secret" }}
+{{- end }}
+{{- end }}
