@@ -36,14 +36,6 @@ spec:
             - name: NETMAKER_SERVER_HOST
               value: https://{{ required "A valid .Values.mq.ingress.host entry required!" .Values.mq.ingress.host }}
 
-          livenessProbe:
-            failureThreshold: 3
-            periodSeconds: 10
-            successThreshold: 1
-            tcpSocket:
-              port: {{ .Values.mq.service.targetPort }}
-            timeoutSeconds: 1
-
           ports:
             - containerPort: 1883        
               name: mqtt
@@ -52,7 +44,7 @@ spec:
               name: mqtt2
               protocol: TCP
 
-          readinessProbe:
+          livenessProbe:
             failureThreshold: 3
             periodSeconds: 10
             successThreshold: 1
@@ -60,7 +52,13 @@ spec:
               port: {{ .Values.mq.service.targetPort }}
             timeoutSeconds: 1
 
-          resources: {}
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: {{ .Values.mq.service.targetPort }}
+            timeoutSeconds: 1
 
           startupProbe:
             failureThreshold: 30
@@ -73,6 +71,8 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
 
+          resources: {}
+
           volumeMounts:
             - name: mosquitto-config
               mountPath: /mosquitto/config/mosquitto.conf
@@ -80,8 +80,6 @@ spec:
             - name: wait-script
               mountPath: /mosquitto/config/wait.sh
               subPath: wait.sh
-            - name: shared-data
-              mountPath: /mosquitto/data
 
       volumes:
         - name: mosquitto-config
@@ -92,11 +90,3 @@ spec:
           configMap:
             name: {{ include "netmaker.fullname" . }}-mqtt-wait
             defaultMode: 0744
-
-        - name: shared-data
-          persistentVolumeClaim:
-          {{- if .Values.mq.persistence.existingClaim }}
-            claimName: {{ .Values.mq.persistence.existingClaim }}
-          {{- else }} 
-            claimName: {{ include "netmaker.fullname" . }}-shared-data
-          {{- end }}
