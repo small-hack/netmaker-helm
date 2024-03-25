@@ -1,186 +1,116 @@
-# Netmaker Helm Chart Repo
-A Helm chart to run Netmaker with High Availability on Kubernetes.
+# netmaker
 
-![Version: 0.7.9](https://img.shields.io/badge/Version-0.7.9-informational?style=flat-square) ![AppVersion: 0.20.3](https://img.shields.io/badge/AppVersion-0.20.3-informational?style=flat-square)
+![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.21.2](https://img.shields.io/badge/AppVersion-v0.21.2-informational?style=flat-square)
 
-This is a fork of a fork of [gravitl/netmaker-helm](https://github.com/gravitl/netmaker-helm). This is a bit more actively maintained than the gravitl repo (right how at time of writing in August 2023), and it moves a lot faster, and so it may be slightly unstable as we work out the kinks. Feel free to submit a PR/Issue if you want to add something or if something is broken.
+A Helm chart to run HA Netmaker on Kubernetes
 
-<!-- vim-markdown-toc GFM -->
+Chart source: https://github.com/small-hack/netmaker-helm/tree/main
 
-* [Requirements](#requirements)
-    * [Example Install](#example-install)
-* [Parameters in values.yaml](#parameters-in-valuesyaml)
-    * [Kernel WireGuard](#kernel-wireguard)
-    * [Ingress Parameters](#ingress-parameters)
-    * [Database Parameters](#database-parameters)
-    * [MQ Parameters](#mq-parameters)
-    * [DNS Parameters](#dns-parameters)
-    * [Oauth Parameters](#oauth-parameters)
+## Maintainers
 
-<!-- vim-markdown-toc -->
+| Name | Email | Url |
+| ---- | ------ | --- |
+| jessebot | <jessebot@linux.com> | <https://github.com/jessebot/> |
+| cloudymax | <emax@cloudydev.net> | <https://github.com/cloudymax/> |
 
 ## Requirements
 
-To run HA Netmaker on Kubernetes, your cluster must have the following:
-- RWO and RWX Storage Classes
-- An Ingress Controller and valid TLS certificates 
-	- This chart can currently generate ingress for:
-		- Nginx Ingress + LetsEncrypt/Cert-Manager
-		- Traefik Ingress + LetsEncrypt/Cert-Manager
-	- to generate automatically, make sure one of the two is configured for your cluster
-- Ability to set up DNS for Secure Web Sockets
-	- Nginx Ingress supports Secure Web Sockets (WSS) by default. If you are not using Nginx Ingress, you must route external traffic from broker.domain to the MQTT service, and provide valid TLS certificates.
-	- One option is to set up a Load Balancer which routes broker.domain:443 to the MQTT service on port 8883.
-	- We do not provide guidance beyond this, and recommend using an Ingress Controller that supports websockets.
+| Repository | Name | Version |
+|------------|------|---------|
+| oci://registry-1.docker.io/bitnamicharts | postgresql | 15.1.2 |
 
-Furthermore, the chart will by default install and use the postgresql cluster from [bitnami Postgresql helm chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) as its datastore.
+## Values
 
-### Example Install
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| affinity | object | `{}` | optional affinity settings for netmaker |
+| api.ingress.annotations | object | `{}` | annotations for the netmaker API ingress object |
+| api.ingress.className | string | `"nginx"` | api ingress className |
+| api.ingress.enabled | bool | `true` | attempts to configure ingress if true |
+| api.ingress.host | string | `"api.cluster.local"` | api (REST) route subdomain |
+| api.ingress.tls | list | `[]` | ingress api tls list |
+| api.service.port | int | `8081` | port for API service |
+| api.service.targetPort | int | `8081` | targetport for API service |
+| api.service.type | string | `"ClusterIP"` | type for netmaker server services |
+| dns.enabled | bool | `false` | whether or not to deploy coredns |
+| dns.persistence.accessMode | string | `"ReadWriteOnce"` |  |
+| dns.persistence.existingClaim | string | `""` | existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns |
+| dns.persistence.storage | string | `"1Gi"` |  |
+| dns.persistence.storageClassName | string | `""` |  |
+| externalDatabase.database | string | `"netmaker"` | postgress db |
+| externalDatabase.existingSecret | string | `""` | use existing secret for netmaker db credentials, must have the following keys: SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB |
+| externalDatabase.host | string | `"external.postgres.url"` | postgres host |
+| externalDatabase.password | string | `""` | postgres pass for netmaker user. ignored if existingSecret is set |
+| externalDatabase.port | int | `5432` | postgres hosts port |
+| externalDatabase.type | string | `"postgresql"` |  |
+| externalDatabase.username | string | `"netmaker"` | postgres username |
+| fullnameOverride | string | `""` | override the full name for netmaker objects |
+| image.pullPolicy | string | `"IfNotPresent"` | Pull Policy for images |
+| image.repository | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from |
+| mq.affinity | object | `{}` | optional affinity settings for mqtt |
+| mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password, mq.username secret keys must be: MQ_PASSWORD, MQ_USERNAME |
+| mq.generateCert | bool | `false` |  |
+| mq.ingress.annotations | object | `{}` | annotations for the mqtt ingress object |
+| mq.ingress.className | string | `"nginx"` |  |
+| mq.ingress.enabled | bool | `true` | attempts to configure ingress if true |
+| mq.ingress.host | string | `"broker.cluster.local"` | hostname for mqtt ingress |
+| mq.ingress.tls | list | `[]` | ingress tls list |
+| mq.password | string | `""` |  |
+| mq.replicas | int | `1` | how many MQTT replicas to create |
+| mq.service.port | int | `443` | port for MQTT service |
+| mq.service.targetPort | int | `8883` | Target port for MQTT service |
+| mq.service.type | string | `"ClusterIP"` | type for netmaker server services |
+| mq.tolerations | object | `{}` | optional tolerations settings for mqtt |
+| mq.username | string | `"netmaker"` |  |
+| nameOverride | string | `""` | override the name for netmaker objects |
+| netmaker.enterprise | object | `{"licenseKey":"","tenantId":""}` | if using enterprise edition fill out this section |
+| netmaker.enterprise.licenseKey | string | `""` | netmaker enterprise license key, ignored if netmaker.existingSecret set |
+| netmaker.enterprise.tenantId | string | `""` | netmaker enterprise tenant ID, ignored if netmaker.existingSecret set |
+| netmaker.existingSecret | string | `""` | if set ignores netmaker.masterKey and enterprise.* must have key called MASTER_KEY, optionally for enterprise must have key: LICENSE_KEY, NETMAKER_TENANT_ID |
+| netmaker.jwtDuration | int | `43200` | Duration of JWT token validity in seconds |
+| netmaker.masterKey | string | `"netmaker"` | ignored if netmaker.masterKeyExistingSecret is set |
+| netmaker.oauth.azureTenant | string | `""` | azureTenant if using azure for oauth - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.clientID | string | `""` | client id if using oidc - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.clientSecret | string | `""` | client secret if using oidc - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.enabled | bool | `false` |  |
+| netmaker.oauth.existingSecret | string | `""` | existing secret for oauth, must have the following keys: CLIENT_ID, CLIENT_SECRET, OIDC_ISSUER, and optionally AZURE_TENANT ignores plane text values if this is set |
+| netmaker.oauth.issuer | string | `""` | oidc issuer - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.provider | string | `"oidc"` | AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc |
+| netmaker.racAutoDisable | string | `"true"` | Auto disable a user's connecteds clients bassed on JWT token expiration |
+| netmaker.serverName | string | `"cluster.local"` |  |
+| podAnnotations | object | `{}` | pod annotations to add |
+| podSecurityContext | object | `{}` | pod security contect to add |
+| postgresql.auth.database | string | `"netmaker"` |  |
+| postgresql.auth.existingSecret | string | `""` | use existing secret for netmaker db credentials, must have the following keys: SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB |
+| postgresql.auth.password | string | `""` |  |
+| postgresql.auth.primary.persistence.enabled | bool | `true` |  |
+| postgresql.auth.username | string | `"netmaker"` |  |
+| postgresql.enabled | bool | `true` |  |
+| replicas | int | `1` | number of netmaker server replicas to create |
+| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
+| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| serviceAccount.name | string | `""` | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
+| setIpForwarding.enabled | bool | `true` |  |
+| shared_data.persistence.accessMode | string | `"ReadWriteMany"` |  |
+| shared_data.persistence.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
+| shared_data.persistence.storage | string | `"128Mi"` |  |
+| shared_data.persistence.storageClassName | string | `""` |  |
+| tolerations | object | `{}` | optional tolerations settings for netmaker |
+| turn.apiHost | string | `""` |  |
+| turn.enabled | bool | `false` | use an external turn server |
+| turn.existingSecret | string | `""` | existing secret with turn server info. Must have the following keys: TURN_SERVER_HOST, TURN_SERVER_API_HOST, TURN_PORT, TURN_USERNAME, TURN_PASSWORD |
+| turn.host | string | `""` |  |
+| turn.password | string | `""` |  |
+| turn.username | string | `""` |  |
+| ui.ingress.annotations | object | `{}` | annotations for the netmaker UI ingress object |
+| ui.ingress.className | string | `"nginx"` | UI ingress className |
+| ui.ingress.enabled | bool | `true` | attempts to configure ingress if true |
+| ui.ingress.host | string | `"dashboard.cluster.local"` | hostname for mqtt ingress |
+| ui.ingress.tls | list | `[]` | ingress tls list |
+| ui.replicas | int | `1` | how many UI replicas to create |
+| ui.service.port | int | `80` | port for UI service |
+| ui.service.targetport | int | `80` | target port for UI service |
+| ui.service.type | string | `"ClusterIP"` | type for netmaker server services |
 
-```bash
-helm repo add netmaker https://gravitl.github.io/netmaker-helm/
-helm install netmaker/netmaker --generate-name \ # generate a random id for the deploy 
---set wireguard.kernel=true \ # set wireguard to kernel mode (false by default)
---set baseDomain=nm.example.com \ # the base wildcard domain to use for the netmaker api/dashboard/mq ingress 
---set replicas=1 \ # number of server replicas to deploy (1 by default) 
---set ingress.enabled=true \ # deploy ingress automatically (requires nginx or traefik and cert-manager + letsencrypt) 
---set ingress.className=nginx \ # ingress class to use 
---set ingress.tls.issuerName=letsencrypt-prod \ # LetsEncrypt certificate issuer to use 
---set dns.enabled=true \ # deploy and enable private DNS management with CoreDNS 
---set dns.clusterIP=10.245.75.75 --set dns.RWX.storageClassName=nfs \ # required fields for DNS 
-# --set postgresql.readReplicaCount=1 \ # number of DB replicas to deploy (default none)
-```
-
-Below, each respective parameter section, we discuss the considerations for Ingress, Kernel WireGuard, and DNS.
-
-## Parameters in values.yaml
-
-| Key                                  | Type   | Default              | Description                                                                                       |
-|--------------------------------------|--------|----------------------|---------------------------------------------------------------------------------------------------|
-| baseDomain                           | string | `"example.com"`      | the base wildcard domain to use for the netmaker api/dashboard/mq ingress                         |
-| persistence.sharedData.existingClaim | string | `""`                 | The name of an existing Persistent Volume Claim to use. If not set, we will create one for you    |
-| fullnameOverride                     | string | `""`                 | override the full name for netmaker objects                                                       |
-| image.pullPolicy                     | string | `"IfNotPresent"`     | Pull Policy for images                                                                            |
-| image.repository                     | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from                                                        |
-| image.tag                            | string | `""`                 | Override the image tag to pull, defaults to [appVersion defined in Chart.yaml] if not specified   |
-| nameOverride                         | string | `""`                 | override the name for netmaker objects                                                            |
-| podAnnotations                       | object | `{}`                 | pod annotations to add                                                                            |
-| podSecurityContext                   | object | `{}`                 | pod security contect to add                                                                       |
-| replicas                             | int    | `1`                  | number of netmaker server replicas to create                                                      |
-| service.mqPort                       | int    | `443`                | public port for MQ service                                                                        |
-| service.restPort                     | int    | `8081`               | port for API service                                                                              |
-| service.type                         | string | `"ClusterIP"`        | type for netmaker server services                                                                 |
-| service.uiPort                       | int    | `80`                 | port for UI service                                                                               |
-| serviceAccount.annotations           | object | `{}`                 | Annotations to add to the service account                                                         |
-| serviceAccount.create                | bool   | `true`               | Specifies whether a service account should be created                                             |
-| serviceAccount.name                  | string | `""`                 | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
-| ui.replicas                          | int    | `1`                  | how many UI replicas to create                                                                    |
-
-### Kernel WireGuard
-If you have control of the Kubernetes worker node servers, we recommend **first** installing WireGuard on the hosts, and then installing HA Netmaker in Kernel mode. By default, Netmaker will install with userspace WireGuard (wireguard-go) for maximum compatibility, and to avoid needing permissions at the host level. If you have installed WireGuard on your hosts, you should install Netmaker's helm chart with the following option:
-`--set wireguard.kernel=true`
-
-| Key                    | Type | Default | Description                                                                               |
-|------------------------|------|---------|-------------------------------------------------------------------------------------------|
-| wireguard.kernel       | bool | `false` | whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts). |
-| wireguard.networkLimit | int  | `10`    | max number of networks that Netmaker will support if running with WireGuard enabled       |
-
-### Ingress Parameters
-To run HA Netmaker, you must have ingress installed and enabled on your cluster with valid TLS certificates (not self-signed). If you are running Nginx as your Ingress Controller and LetsEncrypt for TLS certificate management, you can run the helm install with the following settings:
-`--set ingress.enabled=true`
-`--set ingress.annotations.cert-manager.io/cluster-issuer=<your LE issuer name>`
-
-If you are not using Nginx and LetsEncrypt, we recommend leaving ingress.enabled=false (default), and then manually creating the ingress objects post-install. You will need three ingress objects with TLS:
-`dashboard.<baseDomain>`
-`api.<baseDomain>`
-`broker.<baseDomain>`
-
-You can find example ingress objects in the kube/example folder.
-
-
-| Key                                                                              | Type   | Default              | Description                                          |
-|----------------------------------------------------------------------------------|--------|----------------------|------------------------------------------------------|
-| ingress.annotations.base."kubernetes.io/ingress.allow-http"                      | string | `"false"`            | annotation to generate ACME certs if available       |
-| ingress.annotations.nginx."nginx.ingress.kubernetes.io/rewrite-target"           | string | `"/"`                | destination addr for route                           |
-| ingress.annotations.nginx."nginx.ingress.kubernetes.io/ssl-redirect"             | string | `"true"`             | Redirect http to https                               |
-| ingress.annotations.tls."kubernetes.io/tls-acme"                                 | string | `"true"`             | use acme cert if available                           |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-entry-point" | string | `"https"`            | Redirect to https                                    |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/redirect-permanent"   | string | `"true"`             | Redirect to https permanently                        |
-| ingress.annotations.traefik."traefik.ingress.kubernetes.io/rule-type"            | string | `"PathPrefixStrip"`  | rule type                                            |
-| ingress.enabled                                                                  | bool   | `false`              | attempts to configure ingress if true                |
-| ingress.hostPrefix.mq                                                            | string | `"broker."`          | broker route subdomain                               |
-| ingress.hostPrefix.rest                                                          | string | `"api."`             | api (REST) route subdomain                           |
-| ingress.hostPrefix.ui                                                            | string | `"dashboard."`       | ui route subdomain                                   |
-| ingress.tls.enabled                                                              | bool   | `true`               | enable external traffic to cluster                   |
-| ingress.tls.issuerName                                                           | string | `"letsencrypt-prod"` | Name of Issuer or ClusterIssuer to use for TLS certs |
-
-### Database Parameters
-To use the bitnami posgresql chart bundled with this chart, set `postgresql.enabled: true`, otherwise, you must provide the connection information using the `externalDatabase` parameters documented below.
-
-| Key                                          | Type   | Default                   | Description                                                                             |
-|----------------------------------------------|--------|---------------------------|-----------------------------------------------------------------------------------------|
-| postgresql.enabled                           | bool   | `false`                   | Deploys postgresql chart bundled with this helm chart. ignores externalDatabase if set. |
-| postgresql.persistence.existingClaim         | string | `""`                      | Existing PVC claim name to use for postgresql                                           |
-| postgresql.persistence.size                  | string | `"3Gi"`                   | size of postgres DB                                                                     |
-| postgresql.auth.database                     | string | `"netmaker"`              | postgress db to generate                                                                |
-| postgresql.auth.password                     | string | `""`                      | postgres pass to generate                                                               |
-| postgresql.auth.username                     | string | `"netmaker"`              | postgres user to generate                                                               |
-| postgresql.auth.existingSecret               | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set.                 |
-| postgresql.auth.secretKeys.userPasswordKey   | string | `""`                      | key in existingSecret for the postgres netmaker password, ignores auth.password if set. |
-| postgresql.auth.secretKeys.adminPasswordKey  | string | `""`                      | key in existingSecret for the postgres admin user's password. Admin user is postgres    |
-| postgresql.containerPorts.postgresql         | int    | `5342`                    | postgres port                                                                           |
-| externalDatabase.host                        | string | `"external.postgres.url"` | external postgres host                                                                  |
-| externalDatabase.port                        | int    | `5342`                    | external postgres port                                                                  |
-| externalDatabase.database                    | string | `"netmaker"`              | external postgress db                                                                   |
-| externalDatabase.password                    | string | `""`                      | external postgres pass                                                                  |
-| externalDatabase.username                    | string | `"netmaker"`              | external postgres user                                                                  |
-| externalDatabase.auth.existingSecret         | string | `""`                      | existingSecret for the postgres password, ignores auth.password if set.                 |
-| externalDatabase.auth.secretKeys.passwordKey | string | `""`                      | key in existingSecret for the postgres password, ignores auth.password if set.          |
-
-### MQ Parameters
-
-The MQ Broker is deployed either with Ingress (Nginx or Traefik) preconfigured, or without. If you are using an ingress controller other than Nginx or Traefik, Netmaker's MQTT will not be complete. "broker.domain"  must reach the MQTT service at port 8883 over WSS (Secure Web Sockets).
-
-| Key               | Type   | Default | Description                                                                       |
-|-------------------|--------|---------|-----------------------------------------------------------------------------------|
-| mq.existingClaim  | string | `""`    | Existing PVC claim name to use for MQTT                                           |
-| mq.username       | string | `""`    | username to set for MQ access                                                     |
-| mq.password       | string | `""`    | password to set for MQ access                                                     |
-| mq.existingSecret | string | `""`    | Name of the exsiting secret to use for MQTT password instead of using mq.password |
-| mq.secretKey      | string | `""`    | Name of the key in mq.existingSecret use for MQTT password                        |
-
-### DNS Parameters
-By Default, the helm chart will deploy without DNS enabled. To enable DNS, specify with:
-`--set dns.enabled=true` 
-This will require specifying a RWX storage class, e.g.:
-`--set dns.RWX.storageClassName=nfs`
-This will also require specifying a service address for DNS. Choose a valid ipv4 address from the service IP CIDR for your cluster, e.g.:
-`--set dns.clusterIP=10.245.69.69`
-
-**This address will only be reachable from hosts that have access to the cluster service CIDR.** It is only designed for use cases related to k8s. If you want a more general-use Netmaker server on Kubernetes for use cases outside of k8s, you will need to do one of the following:
-- bind the CoreDNS service to port 53 on one of your worker nodes and set the COREDNS_ADDRESS equal to the public IP of the worker node
-- Create a private Network with Netmaker and set the COREDNS_ADDRESS equal to the private address of the host running CoreDNS. For this, CoreDNS will need a node selector and will ideally run on the same host as one of the Netmaker server instances.
-
-| Key               | Type   | Default   | Description                                       |
-|-------------------|--------|-----------|---------------------------------------------------|
-| dns.enabled       | bool   | `false`   | whether or not to run with DNS (CoreDNS)          |
-| dns.existingClaim | string | `""`      | Existing PVC claim name to use for CoreDNS        |
-| dns.storageSize   | string | `"128Mi"` | volume size for DNS (only needs to hold one file) |
-
-
-### Oauth Parameters
-To use the an OIDC provider such as azure, google, github, or another provider, set `oauth.enabled: true`.
-
-| Key                           | Type   | Default  | Description                                                                           |
-|-------------------------------|--------|----------|---------------------------------------------------------------------------------------|
-| oauth.enabled                 | bool   | `false`  | wether or not to use oauth.                                                           |
-| oauth.provider                | string | `"oidc"` | Oauth provider to user. Must be one of: azure-ad, github, google, oidc.               |
-| oauth.existingSecret          | string | `""`     | existingSecret to use for .                                                           |
-| oauth.secretKeys.clientID     | string | `""`     | key in existingSecret for the Client ID to use with the oauth provider                |
-| oauth.secretKeys.clientSecret | string | `""`     | key in existingSecret for the Client Secret for the oauth provider                    |
-| oauth.secretKeys.frontendURL  | string | `""`     | key in existingSecret for the frontend URL. https://dashboard.<netmaker base domain>? |
-| oauth.secretKeys.issuer       | string | `""`     | key in existingSecret for the issuer URL of the oidc provider                         |
-| oauth.secretKeys.azureTenant  | string | `""`     | key in existingSecret for the azure tenant. only for azure provider                   |
-
-
-[appVersion defined in Chart.yaml]: https://github.com/jessebot/netmaker-helm/blob/main/charts/netmaker/Chart.yaml#L24
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.13.1](https://github.com/norwoodj/helm-docs/releases/v1.13.1)
