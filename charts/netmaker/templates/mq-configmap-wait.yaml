@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: {{ include "netmaker.fullname" . }}-mqtt
+    app.kubernetes.io/name: {{ include "netmaker.fullname" . }}-mqtt
+  name: {{ include "netmaker.fullname" . }}-mqtt-wait
+data:
+  wait.sh: |
+    #!/bin/ash
+
+    encrypt_password() {
+      echo "${MQ_USERNAME}:${MQ_PASSWORD}" > /mosquitto/password.txt
+      mosquitto_passwd -U /mosquitto/password.txt
+    }
+
+    main(){
+
+      encrypt_password
+      echo "Starting MQ..."
+      # Run the main container command.
+      /docker-entrypoint.sh
+      /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf
+
+    }
+
+    main "${@}"
