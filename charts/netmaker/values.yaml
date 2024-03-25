@@ -3,8 +3,6 @@
 # -- number of netmaker server replicas to create
 replicas: 1
 
-baseDomain: example.com
-
 image:
   # -- The image repo to pull Netmaker image from
   repository: gravitl/netmaker
@@ -18,6 +16,23 @@ nameOverride: ""
 
 # -- override the full name for netmaker objects
 fullnameOverride: ""
+
+# -- optional tolerations settings for netmaker
+tolerations: {}
+
+# -- optional affinity settings for netmaker
+affinity: {}
+# example affinity
+# affinity:
+#   podAntiAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#     - labelSelector:
+#         matchExpressions:
+#         - key: app
+#           operator: In
+#           values:
+#           - {{ include "netmaker.fullname" . }}
+#       topologyKey: "kubernetes.io/hostname"
 
 serviceAccount:
   # -- Specifies whether a service account should be created
@@ -34,101 +49,163 @@ podAnnotations: {}
 podSecurityContext: {}
 # fsGroup: 2000
 
-persistence:
-  sharedData:
-    # if not specified, this will create HELM.RELEASE.NAME-shared-data-pvc by default
-    existingClaim: ""
+netmaker:
+  serverName: "cluster.local"
+  # -- ignored if netmaker.masterKeyExistingSecret is set
+  masterKey: "netmaker"
+  # -- Duration of JWT token validity in seconds
+  jwtDuration: 43200
+  # -- Auto disable a user's connecteds clients bassed on JWT token expiration
+  racAutoDisable: "true"
+
+  # -- if using enterprise edition fill out this section
+  enterprise:
+    # -- netmaker enterprise license key, ignored if netmaker.existingSecret set
+    licenseKey: ""
+    # -- netmaker enterprise tenant ID, ignored if netmaker.existingSecret set
+    tenantId: ""
+
+  # -- if set ignores netmaker.masterKey and enterprise.*
+  # must have key called MASTER_KEY, optionally for enterprise must have key:
+  # LICENSE_KEY, NETMAKER_TENANT_ID
+  existingSecret: ""
+
+  # OAuth section
+  oauth:
+    enabled: false
+    # -- AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc
+    provider: "oidc"
+    # --  oidc issuer - ignored if netmaker.oauth.existingSecret is set
+    issuer: ""
+    # --  client id if using oidc - ignored if netmaker.oauth.existingSecret is set
+    clientID: ""
+    # --  client secret if using oidc - ignored if netmaker.oauth.existingSecret is set
+    clientSecret: ""
+    # --  azureTenant if using azure for oauth - ignored if netmaker.oauth.existingSecret is set
+    azureTenant: ""
+    # -- existing secret for oauth, must have the following keys:
+    # CLIENT_ID, CLIENT_SECRET, OIDC_ISSUER, and optionally AZURE_TENANT
+    # ignores plane text values if this is set
+    existingSecret: ""
+
+api:
+  service:
+    # -- type for netmaker server services
+    type: ClusterIP
+    # -- port for API service
+    port: 8081
+    # -- targetport for API service
+    targetPort: 8081
+
+  ingress:
+    # -- attempts to configure ingress if true
+    enabled: true
+    # -- api (REST) route subdomain
+    host: 'api.cluster.local'
+    # -- api ingress className
+    className: "nginx"
+    # -- annotations for the netmaker API ingress object
+    annotations: {}
+    # -- ingress api tls list
+    tls: []
+    # tls:
+    #   - secretName: netmaker-api-tls
+    #     hosts:
+    #       - api.mydomain.tld
 
 ui:
   # -- how many UI replicas to create
   replicas: 1
+  service:
+    # -- type for netmaker server services
+    type: ClusterIP
+    # -- port for UI service
+    port: 80
+    # -- target port for UI service
+    targetport: 80
+  ingress:
+    # -- attempts to configure ingress if true
+    enabled: true
+    # -- hostname for mqtt ingress
+    host: "dashboard.cluster.local"
+    # -- UI ingress className
+    className: "nginx"
+    # -- annotations for the netmaker UI ingress object
+    annotations: {}
+    # -- ingress tls list
+    tls: []
+    # tls:
+    #   - secretName: netmaker-mqtt-tls
+    #     hosts:
+    #       - dashboard.mydomain.tld
 
 mq:
   # -- how many MQTT replicas to create
-  # change to 2 or more and set singlenode to false if needed
   replicas: 1
-  singlenode: true
-  storageSize: 128Mi
+  generateCert: false
+  # -- optional tolerations settings for mqtt
+  tolerations: {}
+  # -- optional affinity settings for mqtt
+  affinity: {}
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #     - matchExpressions:
+  #       - key: mqhost
+  #         operator: In
+  #         values:
+  #         - "true"
   username: netmaker
-  password: 3yyerWGdds43yegGR
-  # name of an existing secret to use for mq password. If set, ignores mq.password
+  password: ''
+  # -- name of an existing secret to use for mq password. If set, ignores mq.password, mq.username
+  # secret keys must be: MQ_PASSWORD, MQ_USERNAME
   existingSecret: ''
-  # name of key in existing secret to grab password from. If set, ignores mq.password
-  secretKey: ''
-  # name of existing PVC claim to use. if set, RWX.storageClassName is ignored
-  existingClaim: ""
-  RWX:
-    storageClassName: ""
+  service:
+    # -- type for netmaker server services
+    type: ClusterIP
+    # -- port for MQTT service
+    port: 443
+    # -- Target port for MQTT service
+    targetPort: 8883
+  ingress:
+    # -- attempts to configure ingress if true
+    enabled: true
+    # -- hostname for mqtt ingress
+    host: "broker.cluster.local"
+    className: "nginx"
+    # -- annotations for the mqtt ingress object
+    annotations: {}
+    ## Redirect http to https
+    # nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    ## destination addr for route
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # -- ingress tls list
+    tls: []
+    # tls:
+    #   - secretName: netmaker-mqtt-tls
+    #     hosts:
+    #       - broker.mydomain.tld
 
 dns:
   # -- whether or not to deploy coredns
   enabled: false
-  # existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns-pvc
-  existingClaim: ''
-  storageSize: 128Mi
-  RWX:
+  persistence:
+    # -- existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns
+    existingClaim: ''
+    storage: 1Gi
     storageClassName: ""
+    accessMode: ReadWriteOnce
+
+shared_data:
+  persistence:
+    # -- name of existing PVC claim to use. if set, storageClassName is ignored
+    existingClaim: ""
+    accessMode: "ReadWriteMany"
+    storageClassName: ""
+    storage: 128Mi
 
 setIpForwarding:
   enabled: true
-
-service:
-  # -- type for netmaker server services
-  type: ClusterIP
-  # -- port for API service
-  restPort: 8081
-  # -- port for MQTT service
-  mqPort: 443
-  # -- port for UI service
-  uiPort: 80
-
-ingress:
-  # -- attempts to configure ingress if true
-  enabled: true
-  className: "nginx"
-  tls:
-    enabled: false
-    issuerName: "letsencrypt-prod"
-  annotations:
-    ui: {}
-    rest: {}
-    mq: {}
-    base:
-      # -- annotation to generate ACME certs if available
-      kubernetes.io/ingress.allow-http: "false"
-    tls:
-      # -- use acme cert if available
-      kubernetes.io/tls-acme: "true"
-    nginx:
-      # -- Redirect http to https
-      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-      # -- destination addr for route
-      nginx.ingress.kubernetes.io/rewrite-target: /
-    traefik:
-      # -- Redirect to https
-      traefik.ingress.kubernetes.io/redirect-entry-point: https
-      # -- Redirect to https permanently
-      traefik.ingress.kubernetes.io/redirect-permanent: "true"
-      # -- rule type
-      traefik.ingress.kubernetes.io/rule-type: "PathPrefixStrip"
-  hostPrefix:
-    # -- ui route subdomain
-    ui: 'dashboard.'
-    # -- api (REST) route subdomain
-    rest: 'api.'
-    # -- mqtt route subdomain
-    broker: 'broker.'
-
-wireguard:
-  # -- whether or not to use WireGuard on server
-  enabled: true
-  service:
-    annotations: {}
-    serviceType: NodePort
-  # -- whether or not to use Kernel WG (should be false unless WireGuard is installed on hosts).
-  kernel: false
-  # -- max number of networks that Netmaker will support if running with WireGuard enabled
-  networkLimit: 10
 
 # https://github.com/bitnami/charts/tree/main/bitnami/postgresql#parameters
 postgresql:
@@ -144,18 +221,13 @@ postgresql:
     # be rotated on each upgrade:
     # https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrade
     password: ""
-    # Set the password for the "postgres" admin user
-    # set this to the same value as above if you've previously installed
-    # this chart and you're having problems getting mastodon to connect to the DB
-    # postgresPassword: ""
-    # you can also specify the name of an existing Secret
-    # with a key of password set to the password you want
+    # -- use existing secret for netmaker db credentials, must have the following keys:
+    # SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB
     existingSecret: ""
-    secretKeys:
-      userPasswordKey: ""
-      adminPasswordKey: ""
-  persistence:
-    existingClaim: ''
+    primary:
+      persistence:
+        enabled: true
+        # existingClaim: ''
 
 # if postgresql.enabled is false, these values are used instead
 externalDatabase:
@@ -171,25 +243,17 @@ externalDatabase:
   password: ""
   # -- postgress db
   database: netmaker
-  # use existing secret for netmaker user's password
+  # -- use existing secret for netmaker db credentials, must have the following keys:
+  # SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB
   existingSecret: ""
-  secretKeys:
-    passwordKey: ""
 
-# OAuth section - untested
-oauth:
+turn:
+  # -- use an external turn server
   enabled: false
-  # AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc
-  provider: "oidc"
+  host: ""
+  apiHost: ""
+  username: ""
+  password: ""
+  # -- existing secret with turn server info. Must have the following keys:
+  # TURN_SERVER_HOST, TURN_SERVER_API_HOST, TURN_PORT, TURN_USERNAME, TURN_PASSWORD
   existingSecret: ""
-  secretKeys:
-    # CLIENT_ID - client id of your oauth provider
-    clientID:
-    # CLIENT_SECRET - client secret of your oauth provider
-    clientSecret:
-    # FRONTEND_URL - https://dashboard.<netmaker base domain> <-- untested
-    frontendURL:
-    # OIDC_ISSUER - https://oidc.yourprovider.com - URL of oidc provider
-    issuer:
-    # AZURE_TENANT - only for azure, you may optionally specify the tenant for the OAuth
-    # azureTenant:

@@ -10,7 +10,7 @@ spec:
     protocol: TCP
     targetPort: mqtt
   - name: mqtt2
-    port: 8883
+    port: {{ .Values.mq.service.targetPort }}
     protocol: TCP
     targetPort: mqtt2    
   selector:

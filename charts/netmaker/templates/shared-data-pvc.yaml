@@ -1,0 +1,13 @@
+---
+{{- if and .Values.dns.enabled (not .Values.shared_data.persistence.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "netmaker.fullname" . }}-shared-data
+spec:
+  storageClassName: {{ .Values.shared_data.persistence.storageClassName }}
+  accessModes: [{{ .Values.shared_data.persistence.accessMode }}]
+  resources:
+    requests:
+      storage: {{ .Values.shared_data.persistence.storage }}
+{{- end }}

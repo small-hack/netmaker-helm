@@ -15,133 +15,59 @@ spec:
       labels:
         app: {{ include "netmaker.fullname" . }}
     spec:
-      initContainers:
-        - name: init-sysctl
-          image: busybox
-          imagePullPolicy: IfNotPresent
-          command: ["/bin/sh", "-c"]
-          args: ["sysctl -w net.ipv4.ip_forward=1 && sysctl -w net.ipv4.conf.all.src_valid_mark=1 && sysctl -w net.ipv6.conf.all.disable_ipv6=0 && sysctl -w net.ipv6.conf.all.forwarding=1"]
-          securityContext:
-            privileged: true
-      dnsPolicy: ClusterFirstWithHostNet
+      {{- with .Values.affinity }}
       affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - {{ include "netmaker.fullname" . }}
-            topologyKey: "kubernetes.io/hostname"
-      containers:
-      - env:
-        - name: NODE_ID
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.name
-        {{- if or .Values.postgresql.auth.existingSecret .Values.externalDatabase.existingSecret }}
-        - name: SQL_PASS
-          valueFrom:
-            secretKeyRef:
-              {{- if .Values.postgresql.auth.existingSecret }}
-              name: {{ .Values.postgresql.auth.existingSecret }}
-              {{- else }}
-              name: {{ .Values.externalDatabase.existingSecret }}
-              {{- end }}
-              {{- if .Values.postgresql.auth.secretKeys.userPasswordKey }}
-              key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
-              {{- else }}
-              key: {{ .Values.externalDatabase.secretKeys.passwordKey }}
-              {{- end }}
-        {{- end }}
-        {{- if .Values.mq.existingSecret }}
-        - name: MQ_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.mq.existingSecret }}
-              key: {{ .Values.mq.secretKey }}
-        - name: MQ_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.mq.existingSecret }}
-              key: {{ .Values.mq.secretKey }}
-        {{- end }}
-        {{- if .Values.oauth.enabled }}
-        - name: CLIENT_ID 
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.oauth.existingSecret }}
-              key: {{ .Values.oauth.secretKeys.clientID }}
-        - name: CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.oauth.existingSecret }}
-              key: {{ .Values.oauth.secretKeys.clientSecret }}
-        - name: OIDC_ISSUER
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.oauth.existingSecret }}
-              key: {{ .Values.oauth.secretKeys.issuer }}
-        - name: FRONTEND_URL 
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.oauth.existingSecret }}
-              key: {{ .Values.oauth.secretKeys.frontendURL }}
-        {{- if .Values.oauth.secretKeys.azureTenant }}
-        - name: AZURE_TENANT 
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.oauth.existingSecret }}
-              key: {{ .Values.oauth.secretKeys.azureTenant }}
-        {{- end }}
-        {{- end }}
-        envFrom:
-          - configMapRef:
-              name: {{ include "netmaker.fullname" . }}
-          - secretRef:
-              name: netmaker-secret
-        image: {{ include "netmaker.image" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        name: {{ include "netmaker.fullname" . }}
-        ports:
-        - containerPort: {{ .Values.service.restPort }}
-          protocol: TCP
-      {{- if .Values.wireguard.enabled }}
-        {{ $count := (add .Values.wireguard.networkLimit 1 | int) }}
-        {{- range untilStep 1 $count 1 }}
-        - containerPort: {{ add 31820 . }}
-          protocol: UDP
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
-        securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
-            - NET_RAW
-            - SYS_MODULE
-        volumeMounts:
-        - mountPath: /etc/netmaker/
-          name: shared-data
-        {{- if .Values.dns.enabled }}
-        - name: {{ include "netmaker.fullname" . }}-dns-pvc
-          mountPath: /root/config/dnsconfig
-        {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "netmaker.fullname" . }}
+          image: {{ include "netmaker.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "netmaker.fullname" . }}-env
+            - secretRef:
+                name: {{ include "netmaker.secret" . }}
+            - secretRef:
+                name: {{ include "netmaker.mq.secret" . }}
+            - secretRef:
+                name: {{ include "netmaker.db.secret" . }}
+            {{- if .Values.netmaker.oauth.enabled }}
+            - secretRef:
+                name: {{ include "netmaker.oauth.secret" . }}
+            {{- end }}
+            {{- if .Values.turn.enabled -}}
+            - secretRef:
+                name: {{ include "netmaker.turn.secret" . }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.api.service.port }}
+              protocol: TCP
+          {{- if .Values.dns.enabled }}
+          volumeMounts:
+          - mountPath: /etc/netmaker/
+            name: shared-data
+          - name: dns-pvc
+            mountPath: /root/config/dnsconfig
+          {{- end }} {{/* end dns.enabled check for volumeMounts */}}
+      {{- if .Values.dns.enabled }}
       volumes:
       - name: shared-data
         persistentVolumeClaim:
-          {{- if .Values.persistence.sharedData.existingClaim }}
-          claimName: {{ .Values.persistence.sharedData.existingClaim }}
+          {{- if .Values.shared_data.persistence.existingClaim }}
+          claimName: {{ .Values.shared_data.persistence.existingClaim }}
           {{- else }}
-          claimName: {{ include "netmaker.fullname" . }}-shared-data-pvc
+          claimName: {{ include "netmaker.fullname" . }}-shared-data
           {{- end }}
-      {{- if .Values.dns.enabled }}
-      - name: {{ include "netmaker.fullname" . }}-dns-pvc
+      - name: dns-pvc
         persistentVolumeClaim:
-          {{- if .Values.dns.existingClaim }}
-          claimName: {{ .Values.dns.existingClaim }}
+          {{- if .Values.dns.persistence.existingClaim }}
+          claimName: {{ .Values.dns.persistence.existingClaim }}
           {{- else }}
-          claimName: {{ include "netmaker.fullname" . }}-dns-pvc
+          claimName: {{ include "netmaker.fullname" . }}-dns
           {{- end }}
-      {{- end }}
+      {{- end }} {{/* end if dns.enabled for volumes */}}

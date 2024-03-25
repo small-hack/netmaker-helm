@@ -31,7 +31,7 @@ spec:
           protocol: TCP
         volumeMounts:
         - mountPath: /root/dnsconfig
-          name: {{ include "netmaker.fullname" . }}-dns-pvc
+          name: dns-pvc
           readOnly: true
         securityContext:
           allowPrivilegeEscalation: false
@@ -45,12 +45,12 @@ spec:
         nameservers:
           - 127.0.0.1
       volumes:
-      - name: {{ include "netmaker.fullname" . }}-dns-pvc
+      - name: dns-pvc
         persistentVolumeClaim:
-          {{- if .Values.dns.existingClaim }}
-          claimName: {{ .Values.dns.existingClaim }}
+          {{- if .Values.dns.persistence.existingClaim }}
+          claimName: {{ .Values.dns.persistence.existingClaim }}
           {{- else }}
-          claimName: {{ include "netmaker.fullname" . }}-dns-pvc
+          claimName: {{ include "netmaker.fullname" . }}-dns
           {{- end }}
 ---
 apiVersion: v1
@@ -74,16 +74,4 @@ spec:
   sessionAffinity: None
   type: ClusterIP
   clusterIP: {{ required "A valid .Values.dns.clusterIP entry required! Choose an IP from your k8s service IP CIDR" .Values.dns.clusterIP}}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ include "netmaker.fullname" . }}-dns-pvc
-spec:
-  storageClassName: {{ required "A valid .Values.dns.RWX.storageClassName entry required! Specify an available RWX storage class." .Values.dns.RWX.storageClassName}}
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: {{ .Values.dns.storageSize }}
 {{- end }}
