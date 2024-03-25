@@ -21,7 +21,7 @@ Furthermore, the chart will by default install and use the postgresql cluster fr
 ### Example Install
 
 ```bash
-helm repo add netmaker https://gravitl.github.io/netmaker-helm/
+helm repo add netmaker https://small-hack.github.io/netmaker-helm
 helm install netmaker/netmaker --generate-name
 ```
 
