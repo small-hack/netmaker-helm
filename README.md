@@ -4,14 +4,14 @@
 
 A Helm chart to run HA Netmaker on Kubernetes
 
-Chart source: https://github.com/small-hack/netmaker-helm/tree/main
+[b]Chart source[/b]: [github.com/small-hack/netmaker-helm](https://github.com/small-hack/netmaker-helm/tree/main)
 
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| jessebot | <jessebot@linux.com> | <https://github.com/jessebot/> |
-| cloudymax | <emax@cloudydev.net> | <https://github.com/cloudymax/> |
+| jessebot  | <https://github.com/jessebot/> |
+| cloudymax | <https://github.com/cloudymax/> |
 
 ## Requirements
 
