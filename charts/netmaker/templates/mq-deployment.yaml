@@ -32,9 +32,23 @@ spec:
           command: ["/mosquitto/config/wait.sh"]
           imagePullPolicy: Always
 
-          env:
-            - name: NETMAKER_SERVER_HOST
-              value: https://{{ required "A valid .Values.mq.ingress.host entry required!" .Values.mq.ingress.host }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "netmaker.fullname" . }}-env
+            - secretRef:
+                name: {{ include "netmaker.secret" . }}
+            - secretRef:
+                name: {{ include "netmaker.mq.secret" . }}
+            - secretRef:
+                name: {{ include "netmaker.db.secret" . }}
+            {{- if .Values.netmaker.oauth.enabled }}
+            - secretRef:
+                name: {{ include "netmaker.oauth.secret" . }}
+            {{- end }}
+            {{- if .Values.turn.enabled -}}
+            - secretRef:
+                name: {{ include "netmaker.turn.secret" . }}
+            {{- end }}
 
           ports:
             - containerPort: 1883        

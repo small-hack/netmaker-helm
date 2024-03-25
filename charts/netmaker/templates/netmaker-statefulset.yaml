@@ -32,16 +32,18 @@ spec:
                 name: {{ include "netmaker.fullname" . }}-env
             - secretRef:
                 name: {{ include "netmaker.secret" . }}
+            - secretRef:
+                name: {{ include "netmaker.mq.secret" . }}
+            - secretRef:
+                name: {{ include "netmaker.db.secret" . }}
             {{- if .Values.netmaker.oauth.enabled }}
             - secretRef:
                 name: {{ include "netmaker.oauth.secret" . }}
-            {{- end -}}
-            - secretRef:
-                name: {{ include "netmaker.db.secret" . }}
+            {{- end }}
             {{- if .Values.turn.enabled -}}
             - secretRef:
                 name: {{ include "netmaker.turn.secret" . }}
-            {{- end -}}
+            {{- end }}
           ports:
             - containerPort: {{ .Values.api.service.port }}
               protocol: TCP

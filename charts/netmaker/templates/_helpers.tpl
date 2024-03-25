@@ -149,12 +149,12 @@ Database for postgresql
 netmaker db secret
 */}}
 {{- define "netmaker.db.secret" -}}
-{{- if .Values.postgresql.auth.existingSecret }}
-{{ print "%s" .Values.postgresql.auth.existingSecret }}
-{{- else if .Values.externalDatabase.existingSecret }}
-{{ print "%s" .Values.externalDatabase.existingSecret }}
-{{- else }}
-{{ print "db-secret" }}
+{{- if .Values.postgresql.auth.existingSecret -}}
+{{ .Values.postgresql.auth.existingSecret }}
+{{- else if .Values.externalDatabase.existingSecret -}}
+{{ .Values.externalDatabase.existingSecret }}
+{{- else -}}
+db-secret
 {{- end }}
 {{- end }}
 
@@ -162,10 +162,21 @@ netmaker db secret
 netmaker secret
 */}}
 {{- define "netmaker.secret" -}}
-{{- if .Values.netmaker.existingSecret }}
-{{ print "%s" .Values.netmaker.existingSecret }}
-{{- else }}
-{{ print "netmaker-secret" }}
+{{- if .Values.netmaker.existingSecret -}}
+{{ .Values.netmaker.existingSecret }}
+{{- else -}}
+netmaker-secret
+{{- end }}
+{{- end }}
+
+{{/*
+mqtt (broker) secret
+*/}}
+{{- define "netmaker.mq.secret" -}}
+{{- if .Values.mq.existingSecret -}}
+{{ .Values.mq.existingSecret }}
+{{- else -}}
+mq-secret
 {{- end }}
 {{- end }}
 
@@ -173,10 +184,10 @@ netmaker secret
 netmaker oauth secret
 */}}
 {{- define "netmaker.oauth.secret" -}}
-{{- if .Values.netmaker.oauth.existingSecret }}
-{{ print "%s" .Values.netmaker.oauth.existingSecret }}
-{{- else }}
-{{ print "netmaker-oauth-secret" }}
+{{- if .Values.netmaker.oauth.existingSecret -}}
+{{ .Values.netmaker.oauth.existingSecret }}
+{{- else -}}
+netmaker-oauth-secret
 {{- end }}
 {{- end }}
 
@@ -184,9 +195,9 @@ netmaker oauth secret
 netmaker turn secret
 */}}
 {{- define "netmaker.turn.secret" -}}
-{{- if .Values.netmaker.turn.existingSecret }}
-{{ print "%s" .Values.netmaker.turn.existingSecret }}
-{{- else }}
-{{ print "turn-secret" }}
+{{- if .Values.netmaker.turn.existingSecret -}}
+{{ .Values.netmaker.turn.existingSecret }}
+{{- else -}}
+turn-secret
 {{- end }}
 {{- end }}
