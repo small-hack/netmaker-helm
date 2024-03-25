@@ -55,10 +55,6 @@ A Helm chart to run HA Netmaker on Kubernetes
 | mq.ingress.host | string | `"broker.cluster.local"` | hostname for mqtt ingress |
 | mq.ingress.tls | list | `[]` | ingress tls list |
 | mq.password | string | `""` |  |
-| mq.persistence.accessMode | string | `"ReadWriteMany"` |  |
-| mq.persistence.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
-| mq.persistence.storage | string | `"128Mi"` |  |
-| mq.persistence.storageClassName | string | `""` |  |
 | mq.replicas | int | `1` | how many MQTT replicas to create |
 | mq.secretKey | string | `""` | name of key in existing secret to grab password from. If set, ignores mq.password |
 | mq.service.port | int | `443` | port for MQTT service |
@@ -67,13 +63,29 @@ A Helm chart to run HA Netmaker on Kubernetes
 | mq.tolerations | object | `{}` | optional tolerations settings for mqtt |
 | mq.username | string | `"netmaker"` |  |
 | nameOverride | string | `""` | override the name for netmaker objects |
-| oauth.enabled | bool | `false` |  |
-| oauth.existingSecret | string | `""` |  |
-| oauth.provider | string | `"oidc"` |  |
-| oauth.secretKeys.clientID | string | `nil` |  |
-| oauth.secretKeys.clientSecret | string | `nil` |  |
-| oauth.secretKeys.frontendURL | string | `nil` |  |
-| oauth.secretKeys.issuer | string | `nil` |  |
+| netmaker.enterprise | object | `{"licenseKey":"","tenantId":""}` | if using enterprise edition fill out this section |
+| netmaker.enterprise.licenseKey | string | `""` | netmaker enterprise license key, ignored if netmaker.existingSecret set |
+| netmaker.enterprise.tenantId | string | `""` | netmaker enterprise tenant ID, ignored if netmaker.existingSecret set |
+| netmaker.existingSecret | string | `""` | if set ignores netmaker.masterKey and enterprise.* |
+| netmaker.jwtDuration | int | `43200` | Duration of JWT token validity in seconds |
+| netmaker.masterKey | string | `"netmaker"` | ignored if netmaker.masterKeyExistingSecret is set |
+| netmaker.oauth.azureTenant | string | `""` | azureTenant if using azure for oauth - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.clientID | string | `""` | client id if using oidc - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.clientSecret | string | `""` | client secret if using oidc - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.enabled | bool | `false` |  |
+| netmaker.oauth.existingSecret | string | `""` |  |
+| netmaker.oauth.issuer | string | `""` | oidc issuer - ignored if netmaker.oauth.existingSecret is set |
+| netmaker.oauth.provider | string | `"oidc"` | AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc |
+| netmaker.oauth.secretKeys.azureTenant | string | `""` |  |
+| netmaker.oauth.secretKeys.clientID | string | `""` |  |
+| netmaker.oauth.secretKeys.clientSecret | string | `""` |  |
+| netmaker.oauth.secretKeys.frontendURL | string | `""` |  |
+| netmaker.oauth.secretKeys.issuer | string | `""` |  |
+| netmaker.racAutoDisable | string | `"true"` | Auto disable a user's connecteds clients bassed on JWT token expiration |
+| netmaker.secretKeys.licenseKey | string | `""` |  |
+| netmaker.secretKeys.masterKey | string | `""` |  |
+| netmaker.secretKeys.tenantId | string | `""` |  |
+| netmaker.serverName | string | `"mynemakerhostname.tld"` |  |
 | podAnnotations | object | `{}` | pod annotations to add |
 | podSecurityContext | object | `{}` | pod security contect to add |
 | postgresql.auth.database | string | `"netmaker"` |  |
@@ -89,7 +101,21 @@ A Helm chart to run HA Netmaker on Kubernetes
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
 | setIpForwarding.enabled | bool | `true` |  |
+| shared_data.persistence.accessMode | string | `"ReadWriteMany"` |  |
+| shared_data.persistence.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
+| shared_data.persistence.storage | string | `"128Mi"` |  |
+| shared_data.persistence.storageClassName | string | `""` |  |
 | tolerations | object | `{}` | optional tolerations settings for netmaker |
+| turn.apiHost | string | `""` |  |
+| turn.enabled | bool | `false` | use an external turn server |
+| turn.existingSecret | string | `""` | existing secret with turn server info |
+| turn.host | string | `""` |  |
+| turn.password | string | `""` |  |
+| turn.secretKeys.apiHost | string | `""` |  |
+| turn.secretKeys.host | string | `""` |  |
+| turn.secretKeys.password | string | `""` |  |
+| turn.secretKeys.username | string | `""` |  |
+| turn.username | string | `""` |  |
 | ui.ingress.annotations | object | `{}` | annotations for the netmaker UI ingress object |
 | ui.ingress.className | string | `"nginx"` | UI ingress className |
 | ui.ingress.enabled | bool | `true` | attempts to configure ingress if true |

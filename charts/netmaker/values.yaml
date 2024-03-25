@@ -49,6 +49,55 @@ podAnnotations: {}
 podSecurityContext: {}
 # fsGroup: 2000
 
+netmaker:
+  serverName: "mynemakerhostname.tld"
+  # -- ignored if netmaker.masterKeyExistingSecret is set
+  masterKey: "netmaker"
+  # -- Duration of JWT token validity in seconds
+  jwtDuration: 43200
+  # -- Auto disable a user's connecteds clients bassed on JWT token expiration
+  racAutoDisable: "true"
+
+  # -- if using enterprise edition fill out this section
+  enterprise:
+    # -- netmaker enterprise license key, ignored if netmaker.existingSecret set
+    licenseKey: ""
+    # -- netmaker enterprise tenant ID, ignored if netmaker.existingSecret set
+    tenantId: ""
+
+  # -- if set ignores netmaker.masterKey and enterprise.*
+  existingSecret: ""
+  secretKeys:
+    licenseKey: ""
+    tenantId: ""
+    masterKey: ""
+
+  # OAuth section
+  oauth:
+    enabled: false
+    # -- AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc
+    provider: "oidc"
+    # --  oidc issuer - ignored if netmaker.oauth.existingSecret is set
+    issuer: ""
+    # --  client id if using oidc - ignored if netmaker.oauth.existingSecret is set
+    clientID: ""
+    # --  client secret if using oidc - ignored if netmaker.oauth.existingSecret is set
+    clientSecret: ""
+    # --  azureTenant if using azure for oauth - ignored if netmaker.oauth.existingSecret is set
+    azureTenant: ""
+    existingSecret: ""
+    secretKeys:
+      # CLIENT_ID - client id of your oauth provider
+      clientID: ""
+      # CLIENT_SECRET - client secret of your oauth provider
+      clientSecret: ""
+      # FRONTEND_URL - https://dashboard.<netmaker base domain> <-- untested
+      frontendURL: ""
+      # OIDC_ISSUER - https://oidc.yourprovider.com - URL of oidc provider
+      issuer: ""
+      # AZURE_TENANT - only for azure, you may optionally specify the tenant for the OAuth
+      azureTenant: ""
+
 api:
   service:
     # -- type for netmaker server services
@@ -122,12 +171,6 @@ mq:
   existingSecret: ''
   # -- name of key in existing secret to grab password from. If set, ignores mq.password
   secretKey: ''
-  persistence:
-    # -- name of existing PVC claim to use. if set, storageClassName is ignored
-    existingClaim: ""
-    accessMode: "ReadWriteMany"
-    storageClassName: ""
-    storage: 128Mi
   service:
     # -- type for netmaker server services
     type: ClusterIP
@@ -163,6 +206,14 @@ dns:
     storage: 1Gi
     storageClassName: ""
     accessMode: ReadWriteOnce
+
+shared_data:
+  persistence:
+    # -- name of existing PVC claim to use. if set, storageClassName is ignored
+    existingClaim: ""
+    accessMode: "ReadWriteMany"
+    storageClassName: ""
+    storage: 128Mi
 
 setIpForwarding:
   enabled: true
@@ -226,20 +277,18 @@ externalDatabase:
   secretKeys:
     passwordKey: ""
 
-# OAuth section - untested
-oauth:
+turn:
+  # -- use an external turn server
   enabled: false
-  # AUTH_PROVIDER: must be one of: azure-ad|github|google|oidc
-  provider: "oidc"
+  host: ""
+  apiHost: ""
+  username: ""
+  password: ""
+  # -- existing secret with turn server info
   existingSecret: ""
+  # keys for the existing turn server secret
   secretKeys:
-    # CLIENT_ID - client id of your oauth provider
-    clientID:
-    # CLIENT_SECRET - client secret of your oauth provider
-    clientSecret:
-    # FRONTEND_URL - https://dashboard.<netmaker base domain> <-- untested
-    frontendURL:
-    # OIDC_ISSUER - https://oidc.yourprovider.com - URL of oidc provider
-    issuer:
-    # AZURE_TENANT - only for azure, you may optionally specify the tenant for the OAuth
-    # azureTenant:
+    host: ""
+    apiHost: ""
+    username: ""
+    password: ""
