@@ -7,7 +7,7 @@ A Helm chart to run Netmaker with High Availability on Kubernetes.
 
 Basically everything from [gravitl/netmaker-helm](https://github.com/gravitl/netmaker-helm), but we:
 
--  organize the values.yaml a little more intuitively by service (UI, MQTT, API, Postgres) instead of k8s resource
+-  organize the values.yaml a little more intuitively by service (UI, MQTT, API, DNS) instead of k8s resource
 -  accept existing secrets for sensitive data such as passwords
 -  have chart testing on new PRs, including a basic install of the chart and linting
 -  [autogenerate docs](./charts/netmaker/README.md) from the comments in [`values.yaml`](./charts/netmaker/values.yaml)
