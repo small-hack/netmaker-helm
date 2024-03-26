@@ -68,6 +68,8 @@ netmaker:
     # ADMIN_USER, ADMIN_PASSWORD
     # If set, disables registration via UI, and ignores netmaker.admin.user, netmaker.admin.password
     existingSecret: ""
+    # -- restart policy for the admin user creation job
+    jobRestartPolicy: "Never"
 
   # -- if using enterprise edition fill out this section
   enterprise:

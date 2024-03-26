@@ -12,6 +12,7 @@ spec:
     metadata:
       name: setup-initial-user-pod
     spec:
+      restartPolicy: {{ .Values.netmaker.admin.jobRestartPolicy }}
       containers:
         - name: setup-initial-user
           image: curlimages/curl:latest
