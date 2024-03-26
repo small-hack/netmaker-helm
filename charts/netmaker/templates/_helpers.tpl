@@ -170,6 +170,17 @@ netmaker-secret
 {{- end }}
 
 {{/*
+netmaker admin credentials secret
+*/}}
+{{- define "netmaker.admin.secret" -}}
+{{- if .Values.netmaker.admin.existingSecret -}}
+{{ .Values.netmaker.admin.existingSecret }}
+{{- else -}}
+netmaker-admin-secret
+{{- end }}
+{{- end }}
+
+{{/*
 mqtt (broker) secret
 */}}
 {{- define "netmaker.mq.secret" -}}

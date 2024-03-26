@@ -58,6 +58,17 @@ netmaker:
   # -- Auto disable a user's connecteds clients bassed on JWT token expiration
   racAutoDisable: "true"
 
+  admin:
+    # -- initial admin user to create. if set, disables registration via UI.
+    # Ignored if netmaker.admin.existingSecret set
+    user: ""
+    # -- initial admin user's password, ignored if netmaker.admin.existingSecret set
+    password: ""
+    # -- set admin user/password via an existing k8s secret. Must have keys:
+    # ADMIN_USER, ADMIN_PASSWORD
+    # If set, disables registration via UI, and ignores netmaker.admin.user, netmaker.admin.password
+    existingSecret: ""
+
   # -- if using enterprise edition fill out this section
   enterprise:
     # -- netmaker enterprise license key, ignored if netmaker.existingSecret set
