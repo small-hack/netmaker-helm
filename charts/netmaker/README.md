@@ -1,6 +1,6 @@
 # netmaker
 
-![Version: 0.10.1](https://img.shields.io/badge/Version-0.10.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.21.2](https://img.shields.io/badge/AppVersion-v0.21.2-informational?style=flat-square)
+![Version: 0.11.0](https://img.shields.io/badge/Version-0.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.23.0](https://img.shields.io/badge/AppVersion-v0.23.0-informational?style=flat-square)
 
 A Helm chart to run HA Netmaker on Kubernetes
 
@@ -61,6 +61,9 @@ A Helm chart to run HA Netmaker on Kubernetes
 | mq.tolerations | object | `{}` | optional tolerations settings for mqtt |
 | mq.username | string | `"netmaker"` |  |
 | nameOverride | string | `""` | override the name for netmaker objects |
+| netmaker.admin.existingSecret | string | `""` | set admin user/password via an existing k8s secret. If set, disables registration via UI, and ignores netmaker.admin.user, netmaker.admin.password |
+| netmaker.admin.password | string | `""` | initial admin user's password, ignored if existingSecret set |
+| netmaker.admin.user | string | `""` | initial admin user to create. if set disables registration via UI. ignored if existingSecret set |
 | netmaker.enterprise | object | `{"licenseKey":"","tenantId":""}` | if using enterprise edition fill out this section |
 | netmaker.enterprise.licenseKey | string | `""` | netmaker enterprise license key, ignored if netmaker.existingSecret set |
 | netmaker.enterprise.tenantId | string | `""` | netmaker enterprise tenant ID, ignored if netmaker.existingSecret set |
