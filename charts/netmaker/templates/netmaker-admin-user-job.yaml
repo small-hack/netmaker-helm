@@ -19,7 +19,7 @@ spec:
             - |-
               curl --location "https://$SERVER_HTTP_HOST/api/users/adm/createsuperadmin" \ 
                    --header 'Content-Type: application/json' \
-                   --data "{'username':'$ADMIN_USER', 'password':'$ADMIN_PASSWORD'}"
+                   --data "{\"username\":\"$ADMIN_USER\",\"password\":\"$ADMIN_PASSWORD\"}"
           env:
             - name: SERVER_HTTP_HOST
               valueFrom:
