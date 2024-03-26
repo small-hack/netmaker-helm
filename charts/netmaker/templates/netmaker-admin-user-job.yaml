@@ -7,20 +7,24 @@ metadata:
   annotations:
     "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "-4"
 spec:
   template:
     metadata:
       name: setup-initial-user-pod
     spec:
       restartPolicy: {{ .Values.netmaker.admin.jobRestartPolicy }}
+      volumes:
+        - name: admin-script
+          configMap:
+            name: setup-initial-user-job-script
       containers:
         - name: setup-initial-user
           image: curlimages/curl:latest
-          command:
-            - |-
-              curl --location "https://$SERVER_HTTP_HOST/api/users/adm/createsuperadmin" \ 
-                   --header 'Content-Type: application/json' \
-                   --data "{\"username\":\"$ADMIN_USER\",\"password\":\"$ADMIN_PASSWORD\"}"
+          volumeMounts:
+            - mountPath: /scripts
+              name: admin-script
+          command: ['/scripts/create_admin_user.sh']
           env:
             - name: SERVER_HTTP_HOST
               valueFrom:
