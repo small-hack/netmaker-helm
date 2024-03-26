@@ -24,9 +24,9 @@ spec:
           env:
             - name: SERVER_HTTP_HOST
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   key: SERVER_HTTP_HOST
-                  name: {{ include "netmaker.secret" . }}
+                  name: {{ include "netmaker.fullname" . }}-env
             - name: ADMIN_USER
               valueFrom:
                 secretKeyRef:
