@@ -4,7 +4,7 @@ kind: Service
 metadata:
   labels:
     {{- include "netmaker.labels" . | nindent 4 }}
-  name: '{{ include "netmaker.fullname" . }}-rest'
+  name: '{{ include "netmaker.fullname" . }}-api'
 spec:
   ports:
     - name: api
