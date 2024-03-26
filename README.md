@@ -9,6 +9,7 @@ Basically everything from [gravitl/netmaker-helm](https://github.com/gravitl/net
 
 -  organize the values.yaml a little more intuitively by service (UI, MQTT, API, DNS) instead of k8s resource
 -  accept existing secrets for sensitive data such as passwords
+-  allow users to set an initial super admin user and disable GUI registration
 -  have chart testing on new PRs, including a basic install of the chart and linting
 -  [autogenerate docs](./charts/netmaker/README.md) from the comments in [`values.yaml`](./charts/netmaker/values.yaml)
 -  use RenovateBot to keep the chart/subcharts up to date
