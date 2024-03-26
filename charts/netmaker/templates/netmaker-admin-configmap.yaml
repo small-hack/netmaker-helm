@@ -1,0 +1,14 @@
+{{- if or .Values.netmaker.admin.user .Values.netmaker.admin.existingSecret }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: setup-initial-user-job-script
+  labels:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "-5"
+    {{- include "netmaker.labels" . | nindent 4 }}
+data:
+  create_admin_user.sh: |
+    curl --location "https://$SERVER_HTTP_HOST/api/users/adm/createsuperadmin" --header 'Content-Type: application/json' --data "{\"username\":\"$ADMIN_USER\",\"password\":\"$ADMIN_PASSWORD\"}"
+{{- end }}
