@@ -9,5 +9,6 @@ metadata:
     "helm.sh/hook-weight": "-5"
 data:
   create_admin_user.sh: |
+    #!/bin/bash
     curl --location "https://$SERVER_HTTP_HOST/api/users/adm/createsuperadmin" --header 'Content-Type: application/json' --data "{\"username\":\"$ADMIN_USER\",\"password\":\"$ADMIN_PASSWORD\"}"
 {{- end }}
