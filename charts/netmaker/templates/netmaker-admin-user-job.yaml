@@ -4,6 +4,9 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: setup-initial-user-job
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   template:
     metadata:
