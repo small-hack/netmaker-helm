@@ -18,6 +18,7 @@ spec:
         - name: admin-script
           configMap:
             name: setup-initial-user-job-script
+            defaultMode: 0755
       containers:
         - name: setup-initial-user
           image: curlimages/curl:latest
