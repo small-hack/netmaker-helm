@@ -62,8 +62,8 @@ A Helm chart to run HA Netmaker on Kubernetes
 | mq.username | string | `"netmaker"` |  |
 | nameOverride | string | `""` | override the name for netmaker objects |
 | netmaker.admin.existingSecret | string | `""` | set admin user/password via an existing k8s secret. If set, disables registration via UI, and ignores netmaker.admin.user, netmaker.admin.password |
-| netmaker.admin.password | string | `""` | initial admin user's password, ignored if existingSecret set |
-| netmaker.admin.user | string | `""` | initial admin user to create. if set disables registration via UI. ignored if existingSecret set |
+| netmaker.admin.password | string | `""` | initial admin user's password, ignored if netmaker.admin.existingSecret set |
+| netmaker.admin.user | string | `""` | initial admin user to create. if set, disables registration via UI. Ignored if netmaker.admin.existingSecret set |
 | netmaker.enterprise | object | `{"licenseKey":"","tenantId":""}` | if using enterprise edition fill out this section |
 | netmaker.enterprise.licenseKey | string | `""` | netmaker enterprise license key, ignored if netmaker.existingSecret set |
 | netmaker.enterprise.tenantId | string | `""` | netmaker enterprise tenant ID, ignored if netmaker.existingSecret set |
