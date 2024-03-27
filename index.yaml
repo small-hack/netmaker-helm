@@ -3,6 +3,27 @@ entries:
   netmaker:
   - apiVersion: v2
     appVersion: v0.23.0
+    created: "2024-03-27T08:11:00.610539104Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 15.1.4
+    description: A Helm chart to run HA Netmaker on Kubernetes
+    digest: f651d742af80e4a00993b47c73ad4c25ff0837467ea3b0d54052d1833d55d28c
+    icon: https://raw.githubusercontent.com/gravitl/netmaker/master/netclient/windowsdata/resource/netclient.ico
+    maintainers:
+    - name: jessebot
+      url: https://github.com/jessebot/
+    - name: cloudymax
+      url: https://github.com/cloudymax/
+    name: netmaker
+    type: application
+    urls:
+    - https://github.com/small-hack/netmaker-helm/releases/download/netmaker-0.11.9/netmaker-0.11.9.tgz
+    version: 0.11.9
+  - apiVersion: v2
+    appVersion: v0.23.0
     created: "2024-03-27T08:02:59.103430069Z"
     dependencies:
     - condition: postgresql.enabled
@@ -703,4 +724,4 @@ entries:
     urls:
     - charts/postgresql-ha-7.11.0.tgz
     version: 7.11.0
-generated: "2024-03-27T08:02:59.103728408Z"
+generated: "2024-03-27T08:11:00.610843992Z"
