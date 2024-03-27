@@ -155,6 +155,7 @@ ui:
 mq:
   # -- how many MQTT replicas to create
   replicas: 1
+  # -- generate a self signed certmanager cert
   generateCert: false
   # -- optional tolerations settings for mqtt
   tolerations: {}
@@ -169,6 +170,7 @@ mq:
   #         values:
   #         - "true"
   username: netmaker
+  # -- mqtt password, ignored if mq.existingSecret is set
   password: ''
   # -- name of an existing secret to use for mq password. If set, ignores mq.password, mq.username
   # secret keys must be: MQ_PASSWORD, MQ_USERNAME
@@ -205,16 +207,22 @@ dns:
   persistence:
     # -- existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns
     existingClaim: ''
+    # -- size of dns persistent volume claim
     storage: 1Gi
+    # -- storage class of dns persistent volume claim
     storageClassName: ""
+    # -- access mode of dns persistent volume claim
     accessMode: ReadWriteOnce
 
 shared_data:
   persistence:
     # -- name of existing PVC claim to use. if set, storageClassName is ignored
     existingClaim: ""
+    # -- access mode of shared data persistent volume claim
     accessMode: "ReadWriteMany"
+    # -- storage class of shared data persistent volume claim
     storageClassName: ""
+    # -- access mode of shared data persistent volume claim
     storage: 128Mi
 
 setIpForwarding:
@@ -263,9 +271,13 @@ externalDatabase:
 turn:
   # -- use an external turn server
   enabled: false
+  # -- turn server hostname
   host: ""
+  # -- turn server api hostname
   apiHost: ""
+  # -- turn server username, ignored if turn.existingSecret is set
   username: ""
+  # -- turn server password, ignored if turn.existingSecret is set
   password: ""
   # -- existing secret with turn server info. Must have the following keys:
   # TURN_SERVER_HOST, TURN_SERVER_API_HOST, TURN_PORT, TURN_USERNAME, TURN_PASSWORD

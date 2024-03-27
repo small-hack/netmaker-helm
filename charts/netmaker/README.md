@@ -1,6 +1,6 @@
 # netmaker
 
-![Version: 0.11.8](https://img.shields.io/badge/Version-0.11.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.23.0](https://img.shields.io/badge/AppVersion-v0.23.0-informational?style=flat-square)
+![Version: 0.11.9](https://img.shields.io/badge/Version-0.11.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.23.0](https://img.shields.io/badge/AppVersion-v0.23.0-informational?style=flat-square)
 
 A Helm chart to run HA Netmaker on Kubernetes
 
@@ -8,8 +8,8 @@ A Helm chart to run HA Netmaker on Kubernetes
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| jessebot | <jessebot@linux.com> | <https://github.com/jessebot/> |
-| cloudymax | <emax@cloudydev.net> | <https://github.com/cloudymax/> |
+| jessebot |  | <https://github.com/jessebot/> |
+| cloudymax |  | <https://github.com/cloudymax/> |
 
 ## Requirements
 
@@ -31,10 +31,10 @@ A Helm chart to run HA Netmaker on Kubernetes
 | api.service.targetPort | int | `8081` | targetport for API service |
 | api.service.type | string | `"ClusterIP"` | type for netmaker server services |
 | dns.enabled | bool | `false` | whether or not to deploy coredns |
-| dns.persistence.accessMode | string | `"ReadWriteOnce"` |  |
+| dns.persistence.accessMode | string | `"ReadWriteOnce"` | access mode of dns persistent volume claim |
 | dns.persistence.existingClaim | string | `""` | existingClaim, if not set, defaults to HELM.RELEASE.NAME-dns |
-| dns.persistence.storage | string | `"1Gi"` |  |
-| dns.persistence.storageClassName | string | `""` |  |
+| dns.persistence.storage | string | `"1Gi"` | size of dns persistent volume claim |
+| dns.persistence.storageClassName | string | `""` | storage class of dns persistent volume claim |
 | externalDatabase.database | string | `"netmaker"` | postgress db |
 | externalDatabase.existingSecret | string | `""` | use existing secret for netmaker db credentials, must have the following keys: SQL_PASS, SQL_HOST, SQL_PORT, SQL_USER, SQL_DB |
 | externalDatabase.host | string | `"external.postgres.url"` | postgres host |
@@ -47,13 +47,13 @@ A Helm chart to run HA Netmaker on Kubernetes
 | image.repository | string | `"gravitl/netmaker"` | The image repo to pull Netmaker image from |
 | mq.affinity | object | `{}` | optional affinity settings for mqtt |
 | mq.existingSecret | string | `""` | name of an existing secret to use for mq password. If set, ignores mq.password, mq.username secret keys must be: MQ_PASSWORD, MQ_USERNAME |
-| mq.generateCert | bool | `false` |  |
+| mq.generateCert | bool | `false` | generate a self signed certmanager cert |
 | mq.ingress.annotations | object | `{}` | annotations for the mqtt ingress object |
 | mq.ingress.className | string | `"nginx"` |  |
 | mq.ingress.enabled | bool | `true` | attempts to configure ingress if true |
 | mq.ingress.host | string | `"broker.cluster.local"` | hostname for mqtt ingress |
 | mq.ingress.tls | list | `[]` | ingress tls list |
-| mq.password | string | `""` |  |
+| mq.password | string | `""` | mqtt password, ignored if mq.existingSecret is set |
 | mq.replicas | int | `1` | how many MQTT replicas to create |
 | mq.service.port | int | `443` | port for MQTT service |
 | mq.service.targetPort | int | `8883` | Target port for MQTT service |
@@ -93,17 +93,17 @@ A Helm chart to run HA Netmaker on Kubernetes
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | Name of SA to use. If not set and create is true, a name is generated using the fullname template |
 | setIpForwarding.enabled | bool | `true` |  |
-| shared_data.persistence.accessMode | string | `"ReadWriteMany"` |  |
+| shared_data.persistence.accessMode | string | `"ReadWriteMany"` | access mode of shared data persistent volume claim |
 | shared_data.persistence.existingClaim | string | `""` | name of existing PVC claim to use. if set, storageClassName is ignored |
-| shared_data.persistence.storage | string | `"128Mi"` |  |
-| shared_data.persistence.storageClassName | string | `""` |  |
+| shared_data.persistence.storage | string | `"128Mi"` | access mode of shared data persistent volume claim |
+| shared_data.persistence.storageClassName | string | `""` | storage class of shared data persistent volume claim |
 | tolerations | object | `{}` | optional tolerations settings for netmaker |
-| turn.apiHost | string | `""` |  |
+| turn.apiHost | string | `""` | turn server api hostname |
 | turn.enabled | bool | `false` | use an external turn server |
 | turn.existingSecret | string | `""` | existing secret with turn server info. Must have the following keys: TURN_SERVER_HOST, TURN_SERVER_API_HOST, TURN_PORT, TURN_USERNAME, TURN_PASSWORD |
-| turn.host | string | `""` |  |
-| turn.password | string | `""` |  |
-| turn.username | string | `""` |  |
+| turn.host | string | `""` | turn server hostname |
+| turn.password | string | `""` | turn server password, ignored if turn.existingSecret is set |
+| turn.username | string | `""` | turn server username, ignored if turn.existingSecret is set |
 | ui.ingress.annotations | object | `{}` | annotations for the netmaker UI ingress object |
 | ui.ingress.className | string | `"nginx"` | UI ingress className |
 | ui.ingress.enabled | bool | `true` | attempts to configure ingress if true |
