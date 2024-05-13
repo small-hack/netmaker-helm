@@ -1,6 +1,6 @@
 # netmaker
 
-![Version: 0.11.9](https://img.shields.io/badge/Version-0.11.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.23.0](https://img.shields.io/badge/AppVersion-v0.23.0-informational?style=flat-square)
+![Version: 0.12.0](https://img.shields.io/badge/Version-0.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.23.0](https://img.shields.io/badge/AppVersion-v0.23.0-informational?style=flat-square)
 
 A Helm chart to run HA Netmaker on Kubernetes
 
@@ -15,7 +15,7 @@ A Helm chart to run HA Netmaker on Kubernetes
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/bitnamicharts | postgresql | 15.1.4 |
+| oci://registry-1.docker.io/bitnamicharts | postgresql | 15.2.12 |
 
 ## Values
 
