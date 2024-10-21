@@ -14,6 +14,11 @@
     ],
     "packageRules": [
       {
+        "matchManagers": ["github-actions"],
+        "matchUpdateTypes": ["patch","minor"],
+        "automerge": true
+      },
+      {
         "description": "Fix subchart archives for helm chart",
         "matchManagers": ["helmv3"],
         "postUpdateOptions": ["helmUpdateSubChartArchives"]
